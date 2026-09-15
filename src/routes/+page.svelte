@@ -1,15 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { writable } from "svelte/store";
-  import { loadTheme } from "$lib/store";
-  import { userState } from "$lib/state.svelte.js";
+  import { gUserState } from "$lib/state.svelte";
   import {
     cmdGetTimerCount,
     cmdGetTimerStatus,
     cmdStartTimer,
     cmdStopTimer,
-    cmdGetTimerList,
-    cmdGetTags
+    cmdGetTimerList
   } from "$lib/gen";
   import type { TimerSetting } from "$lib/gen/types";
   import IconVar from "$lib/IconVar.svelte";
@@ -21,7 +18,6 @@
   let intervalId: number | null = null;
   let timerList: TimerSetting[] = $state([]);
   let totalTime = $state("0m");
-  let tags: string[] = $state([]);
 
   async function update() {
     ({ is_time_out: isTimeout, count_string: countString } = await cmdGetTimerCount());
@@ -55,14 +51,6 @@
     }
   }
 
-  async function updateTimerList() {
-    timerList = await cmdGetTimerList();
-  }
-
-  async function updateTags() {
-    tags = await cmdGetTags();
-  }
-
   async function start(name: string, tag: string) {
     await cmdStartTimer({ name, tag });
     updateTimerStatus();
@@ -76,9 +64,7 @@
   }
 
   onMount(async () => {
-    loadTheme();
-    updateTags();
-    updateTimerList();
+    timerList = await cmdGetTimerList();
     updateTimerStatus();
     update();
   });
@@ -94,8 +80,8 @@
 
   <div class="flex justify-center">
     <span class="label mr-1">Tag:</span>
-    <select bind:value={userState.tag} class="select">
-      {#each tags as tag}
+    <select bind:value={gUserState.tag} class="select">
+      {#each gUserState.tags as tag}
         <option>{tag}</option>
       {/each}
     </select>
@@ -105,7 +91,7 @@
       {#each timerList as timer}
         <button
           onclick={() =>
-            timerName === timer.name ? stop(userState.tag) : start(timer.name, userState.tag)}
+            timerName === timer.name ? stop(gUserState.tag) : start(timer.name, gUserState.tag)}
           class="btn flex-auto {timerName === timer.name ? '' : 'btn-soft'} btn-primary"
         >
           <IconVar name={timer.icon} class="h-5" />{timer.name}

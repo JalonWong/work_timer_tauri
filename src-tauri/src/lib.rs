@@ -38,7 +38,6 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             cmd_save_theme,
-            cmd_get_theme,
             cmd_start_timer,
             cmd_stop_timer,
             cmd_get_timer_list,
@@ -47,7 +46,7 @@ pub fn run() {
             cmd_get_history,
             cmd_delete_record,
             cmd_modify_record,
-            cmd_get_tags,
+            cmd_get_settings,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -58,12 +57,6 @@ fn cmd_save_theme(theme: &str, state: State<AppState>) {
     let mut settings = state.settings.lock().unwrap();
     settings.set_theme(theme);
     settings.save();
-}
-
-#[tauri::command]
-fn cmd_get_theme(state: State<AppState>) -> String {
-    let settings = state.settings.lock().unwrap();
-    settings.theme().to_string()
 }
 
 #[tauri::command]
@@ -217,7 +210,20 @@ fn get_time_from_offset_days(days: i64) -> SystemTime {
 }
 
 #[tauri::command]
-fn cmd_get_tags(state: State<AppState>) -> Vec<String> {
+fn cmd_get_settings(state: State<AppState>) -> UiSettings {
     let settings = state.settings.lock().unwrap();
-    settings.tags().into()
+    UiSettings {
+        theme: settings.theme().to_string(),
+        tags: settings.tags().into(),
+        tag: settings.current_tag().to_string(),
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+struct UiSettings {
+    theme: String,
+    tags: Vec<String>,
+    tag: String,
+    // play_audio: bool,
+    // audio_file: String,
 }

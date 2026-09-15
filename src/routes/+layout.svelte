@@ -1,5 +1,7 @@
 <script lang="ts">
   import "./layout.css";
+  import { onMount } from "svelte";
+  import { loadState } from "$lib/state.svelte";
   import MenuIcon from "@iconify-svelte/mdi/menu";
   import HomeIcon from "@iconify-svelte/mdi/home";
   import SettingsIcon from "@iconify-svelte/mdi/settings";
@@ -11,6 +13,10 @@
   function toggleSidebar() {
     showSidebar = !showSidebar;
   }
+
+  onMount(async () => {
+    loadState();
+  });
 </script>
 
 <div class="drawer drawer-end">

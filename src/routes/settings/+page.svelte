@@ -1,6 +1,6 @@
 <script lang="ts">
   import Header from "$lib/Header.svelte";
-  import { setTheme, getTheme } from "$lib/store";
+  import { setTheme, getTheme } from "$lib/state.svelte";
   import SunIcon from "@iconify-svelte/mdi/white-balance-sunny";
   import NightIcon from "@iconify-svelte/mdi/weather-night";
   import ComputerIcon from "@iconify-svelte/mdi/computer";

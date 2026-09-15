@@ -22,8 +22,8 @@ impl Settings {
 
         let info = Self::load_settings(&file_name);
         let mut cache_info = Self::load_cache(&cache_name);
-        if cache_info.tag_index >= info.tags.len() {
-            cache_info.tag_index = 0;
+        if !info.tags.contains(&cache_info.tag) {
+            cache_info.tag = info.tags[0].clone();
         }
 
         Self {
@@ -86,7 +86,7 @@ impl Settings {
         let mut info = CacheInfo {
             maximized: false,
             window: None,
-            tag_index: 0,
+            tag: "".to_string(),
         };
 
         if file_name.exists() {
@@ -170,12 +170,12 @@ impl Settings {
         self.info.play_audio
     }
 
-    pub fn set_tag_index(&mut self, v: usize) {
-        self.cache_info.tag_index = v;
+    pub fn set_current_tag(&mut self, v: &str) {
+        self.cache_info.tag = v.to_string();
     }
 
-    pub fn tag_index(&self) -> usize {
-        self.cache_info.tag_index
+    pub fn current_tag(&self) -> &str {
+        &self.cache_info.tag
     }
 }
 
@@ -198,7 +198,7 @@ pub fn get_config_dir() -> PathBuf {
 struct CacheInfo {
     maximized: bool,
     window: Option<WindowInfo>,
-    tag_index: usize,
+    tag: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
