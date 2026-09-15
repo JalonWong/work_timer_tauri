@@ -47,6 +47,7 @@ pub fn run() {
             cmd_get_history,
             cmd_delete_record,
             cmd_modify_record,
+            cmd_get_tags,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -66,9 +67,9 @@ fn cmd_get_theme(state: State<AppState>) -> String {
 }
 
 #[tauri::command]
-fn cmd_start_timer(name: &str, state: State<AppState>) {
+fn cmd_start_timer(name: &str, tag: &str, state: State<AppState>) {
     let mut timer = state.count_timer.lock().unwrap();
-    stop_and_save(&mut timer, &state);
+    stop_and_save(&mut timer, tag, &state);
 
     let settings = state.settings.lock().unwrap();
     for t in settings.timer_list() {
@@ -80,9 +81,9 @@ fn cmd_start_timer(name: &str, state: State<AppState>) {
 }
 
 #[tauri::command]
-fn cmd_stop_timer(state: State<AppState>) {
+fn cmd_stop_timer(tag: &str, state: State<AppState>) {
     let mut timer = state.count_timer.lock().unwrap();
-    stop_and_save(&mut timer, &state);
+    stop_and_save(&mut timer, tag, &state);
 }
 
 #[tauri::command]
@@ -185,14 +186,14 @@ fn cmd_modify_record(key: u64, duration: u64, tag: &str, state: State<AppState>)
     history.modify_record(key, duration, tag);
 }
 
-fn stop_and_save(timer: &mut Timer, state: &State<AppState>) {
+fn stop_and_save(timer: &mut Timer, tag: &str, state: &State<AppState>) {
     if let Some(duration) = timer.stop() {
         state.state.lock().unwrap().total_time += duration;
         state
             .history
             .lock()
             .unwrap()
-            .add_record(timer.get_start_time(), duration, "reading");
+            .add_record(timer.get_start_time(), duration, tag);
     }
 }
 
@@ -213,4 +214,10 @@ fn get_time_from_offset_days(days: i64) -> SystemTime {
         .single()
         .unwrap()
         .into()
+}
+
+#[tauri::command]
+fn cmd_get_tags(state: State<AppState>) -> Vec<String> {
+    let settings = state.settings.lock().unwrap();
+    settings.tags().into()
 }

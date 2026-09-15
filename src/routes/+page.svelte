@@ -1,12 +1,15 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { writable } from "svelte/store";
   import { loadTheme } from "$lib/store";
+  import { userState } from "$lib/state.svelte.js";
   import {
     cmdGetTimerCount,
     cmdGetTimerStatus,
     cmdStartTimer,
     cmdStopTimer,
-    cmdGetTimerList
+    cmdGetTimerList,
+    cmdGetTags
   } from "$lib/gen";
   import type { TimerSetting } from "$lib/gen/types";
   import IconVar from "$lib/IconVar.svelte";
@@ -18,6 +21,7 @@
   let intervalId: number | null = null;
   let timerList: TimerSetting[] = $state([]);
   let totalTime = $state("0m");
+  let tags: string[] = $state([]);
 
   async function update() {
     ({ is_time_out: isTimeout, count_string: countString } = await cmdGetTimerCount());
@@ -55,20 +59,25 @@
     timerList = await cmdGetTimerList();
   }
 
-  async function start(name: string) {
-    await cmdStartTimer({ name });
+  async function updateTags() {
+    tags = await cmdGetTags();
+  }
+
+  async function start(name: string, tag: string) {
+    await cmdStartTimer({ name, tag });
     updateTimerStatus();
     update();
   }
 
-  async function stop() {
-    await cmdStopTimer();
+  async function stop(tag: string) {
+    await cmdStopTimer({ tag });
     updateTimerStatus();
     update();
   }
 
   onMount(async () => {
     loadTheme();
+    updateTags();
     updateTimerList();
     updateTimerStatus();
     update();
@@ -83,11 +92,20 @@
     <span>Limit: {limitMins}m</span>
   </div>
 
+  <div class="flex justify-center">
+    <span class="label mr-1">Tag:</span>
+    <select bind:value={userState.tag} class="select">
+      {#each tags as tag}
+        <option>{tag}</option>
+      {/each}
+    </select>
+  </div>
   <div class="m-3">
     <div class="flex justify-evenly gap-1">
       {#each timerList as timer}
         <button
-          onclick={() => (timerName === timer.name ? stop() : start(timer.name))}
+          onclick={() =>
+            timerName === timer.name ? stop(userState.tag) : start(timer.name, userState.tag)}
           class="btn flex-auto {timerName === timer.name ? '' : 'btn-soft'} btn-primary"
         >
           <IconVar name={timer.icon} class="h-5" />{timer.name}

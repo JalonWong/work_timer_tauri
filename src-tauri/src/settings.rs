@@ -42,9 +42,9 @@ impl Settings {
             audio_file: "assets/notify.wav".to_string(),
             play_audio: true,
             tags: vec![
-                "Program".to_string(),
+                "Programming".to_string(),
                 "English".to_string(),
-                "Read".to_string(),
+                "Reading".to_string(),
             ],
             timer_list: vec![
                 TimerSetting {
