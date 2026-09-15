@@ -1,14 +1,216 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+use chrono::Local;
+use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
+use std::{fs, path::PathBuf, time::SystemTime};
+use tauri::State;
+
+mod history;
+mod settings;
+mod timer;
+
+use history::History;
+use settings::{Settings, TimerSetting};
+use timer::Timer;
+
+struct AppState {
+    settings: Mutex<Settings>,
+    history: Mutex<History>,
+    count_timer: Mutex<Timer>,
+    state: Mutex<MainState>,
+}
+
+struct MainState {
+    total_time: u64,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let history = History::new();
+    let total_time = init_total_time(&history);
+    let settings = Settings::new();
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .manage(AppState {
+            settings: Mutex::new(settings),
+            history: Mutex::new(history),
+            count_timer: Mutex::new(Timer::new()),
+            state: Mutex::new(MainState { total_time }),
+        })
+        .invoke_handler(tauri::generate_handler![
+            cmd_save_theme,
+            cmd_get_theme,
+            cmd_start_timer,
+            cmd_stop_timer,
+            cmd_get_timer_list,
+            cmd_get_timer_count,
+            cmd_get_timer_status,
+            cmd_get_history,
+            cmd_delete_record,
+            cmd_modify_record,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[tauri::command]
+fn cmd_save_theme(theme: &str, state: State<AppState>) {
+    let mut settings = state.settings.lock().unwrap();
+    settings.set_theme(theme);
+    settings.save();
+}
+
+#[tauri::command]
+fn cmd_get_theme(state: State<AppState>) -> String {
+    let settings = state.settings.lock().unwrap();
+    settings.theme().to_string()
+}
+
+#[tauri::command]
+fn cmd_start_timer(name: &str, state: State<AppState>) {
+    let mut timer = state.count_timer.lock().unwrap();
+    stop_and_save(&mut timer, &state);
+
+    let settings = state.settings.lock().unwrap();
+    for t in settings.timer_list() {
+        if t.name == name {
+            timer.start(t);
+            break;
+        }
+    }
+}
+
+#[tauri::command]
+fn cmd_stop_timer(state: State<AppState>) {
+    let mut timer = state.count_timer.lock().unwrap();
+    stop_and_save(&mut timer, &state);
+}
+
+#[tauri::command]
+fn cmd_get_timer_list(state: State<AppState>) -> Vec<TimerSetting> {
+    let settings = state.settings.lock().unwrap();
+    settings.timer_list().into()
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct TimerCountRst {
+    pub is_time_out: bool,
+    pub count_string: String,
+}
+
+#[tauri::command]
+fn cmd_get_timer_count(state: State<AppState>) -> TimerCountRst {
+    let mut timer = state.count_timer.lock().unwrap();
+    let (is_time_out, count_string) = timer.update();
+    TimerCountRst {
+        is_time_out,
+        count_string,
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct TimerStatusRst {
+    pub is_running: bool,
+    pub name: String,
+    pub limit_mins: u64,
+    pub total_time: u64,
+}
+
+#[tauri::command]
+fn cmd_get_timer_status(state: State<AppState>) -> TimerStatusRst {
+    let total_time = state.state.lock().unwrap().total_time;
+    let timer = state.count_timer.lock().unwrap();
+    let timer_setting = timer.get_setting();
+    let is_running = timer.status() != timer::Status::Stopped;
+    timer_setting.map_or_else(
+        || TimerStatusRst {
+            is_running,
+            name: "".to_string(),
+            limit_mins: 0,
+            total_time,
+        },
+        |s| TimerStatusRst {
+            is_running,
+            name: s.name.clone(),
+            limit_mins: s.limit_time,
+            total_time,
+        },
+    )
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct HistoryInfo {
+    pub key: u64,
+    pub start_time: String,
+    pub duration: String,
+    pub duration_secs: u64,
+    pub tag: String,
+}
+
+#[tauri::command]
+fn cmd_get_history(
+    offset_days: Option<i64>,
+    reverse: bool,
+    state: State<AppState>,
+) -> Vec<HistoryInfo> {
+    let history = state.history.lock().unwrap();
+    let start = match offset_days {
+        Some(days) => crate::get_time_from_offset_days(days),
+        None => SystemTime::UNIX_EPOCH,
+    };
+    let end = SystemTime::now();
+    let records = history.get_records(&start, &end, reverse);
+    records
+        .iter()
+        .map(|r| HistoryInfo {
+            key: r.key,
+            start_time: chrono::DateTime::<Local>::from(r.start_time)
+                .format("%Y-%m-%d %H:%M:%S")
+                .to_string(),
+            duration: crate::timer::secs_to_string(r.duration, ""),
+            duration_secs: r.duration,
+            tag: r.tag.clone(),
+        })
+        .collect()
+}
+
+#[tauri::command]
+fn cmd_delete_record(key: u64, state: State<AppState>) {
+    let mut history = state.history.lock().unwrap();
+    history.remove(key);
+}
+
+#[tauri::command]
+fn cmd_modify_record(key: u64, duration: u64, tag: &str, state: State<AppState>) {
+    let mut history = state.history.lock().unwrap();
+    history.modify_record(key, duration, tag);
+}
+
+fn stop_and_save(timer: &mut Timer, state: &State<AppState>) {
+    if let Some(duration) = timer.stop() {
+        state.state.lock().unwrap().total_time += duration;
+        state
+            .history
+            .lock()
+            .unwrap()
+            .add_record(timer.get_start_time(), duration, "reading");
+    }
+}
+
+fn init_total_time(history: &History) -> u64 {
+    let end = SystemTime::now();
+    let start = get_time_from_offset_days(0);
+    history
+        .get_records(&start, &end, false)
+        .iter()
+        .map(|r| r.duration)
+        .sum()
+}
+
+fn get_time_from_offset_days(days: i64) -> SystemTime {
+    let date = Local::now().date_naive() + chrono::Duration::days(days);
+    let time = date.and_hms_opt(0, 0, 0).unwrap();
+    time.and_local_timezone(chrono::Local)
+        .single()
+        .unwrap()
+        .into()
 }
