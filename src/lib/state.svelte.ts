@@ -29,6 +29,24 @@ export async function setTheme(theme: string) {
   applyTheme(theme);
 }
 
+function moveItemInPlace<T>(arr: T[], index: number, up: boolean): void {
+  let to_index = index;
+  if (up) {
+    if (index == 0) {
+      return;
+    }
+    to_index -= 1;
+  } else {
+    to_index += 1;
+    if (to_index >= arr.length) {
+      return;
+    }
+  }
+
+  const [item] = arr.splice(index, 1);
+  arr.splice(to_index, 0, item);
+}
+
 export function newTimer() {
   gUserState.timers.push({
     label: "new",
@@ -44,21 +62,19 @@ export function deleteTimer(index: number) {
 }
 
 export function moveTimer(index: number, up: boolean) {
-  let to_index = index;
-  if (up) {
-    if (index == 0) {
-      return;
-    }
-    to_index -= 1;
-  } else {
-    to_index += 1;
-    if (to_index >= gUserState.timers.length) {
-      return;
-    }
-  }
+  moveItemInPlace(gUserState.timers, index, up);
+}
 
-  const [item] = gUserState.timers.splice(index, 1);
-  gUserState.timers.splice(to_index, 0, item);
+export function newTag() {
+  gUserState.tags.push("new")
+}
+
+export function deleteTag(index: number) {
+  gUserState.tags.splice(index, 1);
+}
+
+export function moveTag(index: number, up: boolean) {
+  moveItemInPlace(gUserState.tags, index, up);
 }
 
 export async function loadSettings() {

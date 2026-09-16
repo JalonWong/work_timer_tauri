@@ -229,10 +229,10 @@ fn cmd_get_settings(state: State<AppState>) -> UiSettings {
 fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
     let mut s = state.settings.lock().unwrap();
     s.set_current_tag(&settings.tag);
+    *s.mut_tags() = settings.tags;
     s.set_theme(&settings.theme);
+    *s.mut_timer_list() = settings.timers;
     s.set_window_info(&settings.win_info);
-    let timers = s.mut_timer_list();
-    *timers = settings.timers;
     s.save();
     s.save_cache();
 }
