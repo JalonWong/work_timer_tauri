@@ -1,6 +1,6 @@
 [package]
   authors = ["Jalon Wong <jalonwong@gmail.com>"]
-  description = "A Work Timer App"
+  description = "A Work Timer Application"
   edition = "2024"
   name = "work_timer_tauri"
   version = "0.1.0"

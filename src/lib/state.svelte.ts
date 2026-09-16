@@ -89,17 +89,17 @@ export async function loadSettings() {
 export async function saveSettings() {
   const win = getCurrentWindow();
 
-  const position = await win.innerPosition();
+  const position = await win.outerPosition();
   let size = await win.innerSize();
   const osize = await win.outerSize();
 
   // for wayland bug
-  if (size.width == osize.width) {
-    size.width -= 90;
-  }
-  if (size.height == osize.height) {
-    size.height -= 138;
-  }
+  // if (size.width == osize.width) {
+  //   size.width -= 90;
+  // }
+  // if (size.height == osize.height) {
+  //   size.height -= 138;
+  // }
 
   cmdSaveSettings({
     settings: {

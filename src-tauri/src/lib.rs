@@ -52,16 +52,17 @@ pub fn run() {
             cmd_save_settings,
         ])
         .setup(|app| {
+            let win = app.get_webview_window("main").unwrap();
             if let Some(win_info) = win_info {
-                let win = app.get_webview_window("main").unwrap();
-                let _ = win.set_position(PhysicalPosition::new(win_info.x, win_info.y));
                 let _ = win.set_size(PhysicalSize::new(win_info.width, win_info.height));
+                let _ = win.set_position(PhysicalPosition::new(win_info.x, win_info.y));
                 if win_info.maximized {
                     let _ = win.maximize();
                 } else {
                     let _ = win.unmaximize();
                 }
             }
+            let _ = win.show();
             Ok(())
         })
         .run(tauri::generate_context!())

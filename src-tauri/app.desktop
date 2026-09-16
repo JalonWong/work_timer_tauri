@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Work Timer
+Comment={{comment}}
+Type=Application
+Terminal=false
+Categories=Utility;
+Exec={{exec}}
+Icon={{icon}}
+StartupWMClass={{name}}
