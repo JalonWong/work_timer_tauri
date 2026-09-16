@@ -1,8 +1,8 @@
 use chrono::Local;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-use std::{fs, path::PathBuf, time::SystemTime};
-use tauri::State;
+use std::time::SystemTime;
+use tauri::{Manager, State};
 
 mod history;
 mod settings;
@@ -37,7 +37,6 @@ pub fn run() {
             state: Mutex::new(MainState { total_time }),
         })
         .invoke_handler(tauri::generate_handler![
-            cmd_save_theme,
             cmd_start_timer,
             cmd_stop_timer,
             cmd_get_timer_list,
@@ -47,16 +46,10 @@ pub fn run() {
             cmd_delete_record,
             cmd_modify_record,
             cmd_get_settings,
+            cmd_save_settings,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-}
-
-#[tauri::command]
-fn cmd_save_theme(theme: &str, state: State<AppState>) {
-    let mut settings = state.settings.lock().unwrap();
-    settings.set_theme(theme);
-    settings.save();
 }
 
 #[tauri::command]
@@ -217,6 +210,15 @@ fn cmd_get_settings(state: State<AppState>) -> UiSettings {
         tags: settings.tags().into(),
         tag: settings.current_tag().to_string(),
     }
+}
+
+#[tauri::command]
+fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
+    let mut s = state.settings.lock().unwrap();
+    s.set_current_tag(&settings.tag);
+    s.set_theme(&settings.theme);
+    s.save();
+    s.save_cache();
 }
 
 #[derive(Serialize, Deserialize)]

@@ -1,4 +1,4 @@
-import { cmdSaveTheme, cmdGetSettings } from "./gen";
+import { cmdGetSettings, cmdSaveSettings } from "./gen";
 
 export const gUserState = $state({
   theme: "",
@@ -13,10 +13,9 @@ export function getTheme(): string {
 export async function setTheme(theme: string) {
   gUserState.theme = theme;
   applyTheme(theme);
-  await cmdSaveTheme({ theme });
 }
 
-export async function loadState() {
+export async function loadSettings() {
   let settings = await cmdGetSettings();
   gUserState.tag = settings.tag;
   gUserState.tags = settings.tags;
@@ -24,13 +23,18 @@ export async function loadState() {
   applyTheme(settings.theme);
 }
 
-const THEMES: Record<string, string> = {
-  "Light": "light",
-  "Dark": "dark",
-} as const;
+export async function saveSettings() {
+  cmdSaveSettings({
+    settings: {
+      theme: gUserState.theme,
+      tag: gUserState.tag,
+      tags: gUserState.tags,
+    }
+  });
+}
 
 function applyTheme(theme: string) {
-  theme in THEMES
-    ? document.documentElement.dataset.theme = THEMES[theme]!
-    : document.documentElement.removeAttribute('data-theme');
+  theme == ""
+    ? document.documentElement.removeAttribute('data-theme')
+    : document.documentElement.dataset.theme = theme;
 }

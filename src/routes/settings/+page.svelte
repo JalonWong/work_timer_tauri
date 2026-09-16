@@ -6,9 +6,9 @@
   import ComputerIcon from "@iconify-svelte/mdi/computer";
 
   let themes = [
-    { name: "System", icon: ComputerIcon },
-    { name: "Light", icon: SunIcon },
-    { name: "Dark", icon: NightIcon }
+    { value: "", label: "System", icon: ComputerIcon },
+    { value: "light", label: "Light", icon: SunIcon },
+    { value: "dark", label: "Dark", icon: NightIcon }
   ];
 </script>
 
@@ -19,10 +19,10 @@
     <div class="flex gap-3">
       {#each themes as theme}
         <button
-          onclick={() => setTheme(theme.name)}
-          class="btn {getTheme() === theme.name ? 'btn-primary' : ''}"
+          onclick={() => setTheme(theme.value)}
+          class="btn {getTheme() === theme.value ? 'btn-primary' : ''}"
         >
-          <theme.icon class="h-5" />{theme.name}
+          <theme.icon class="h-5" />{theme.label}
         </button>
       {/each}
     </div>

@@ -1,7 +1,8 @@
 <script lang="ts">
   import "./layout.css";
   import { onMount } from "svelte";
-  import { loadState } from "$lib/state.svelte";
+  import { getCurrentWindow } from "@tauri-apps/api/window";
+  import { loadSettings, saveSettings } from "$lib/state.svelte";
   import MenuIcon from "@iconify-svelte/mdi/menu";
   import HomeIcon from "@iconify-svelte/mdi/home";
   import SettingsIcon from "@iconify-svelte/mdi/settings";
@@ -14,8 +15,19 @@
     showSidebar = !showSidebar;
   }
 
-  onMount(async () => {
-    loadState();
+  onMount(() => {
+    void loadSettings();
+    const unlisten = getCurrentWindow().onCloseRequested(async (event) => {
+      event.preventDefault();
+      try {
+        await saveSettings();
+      } finally {
+        await getCurrentWindow().destroy(); // actually close
+      }
+    });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
   });
 </script>
 

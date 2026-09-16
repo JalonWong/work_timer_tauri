@@ -23,7 +23,7 @@ impl Settings {
         let info = Self::load_settings(&file_name);
         let mut cache_info = Self::load_cache(&cache_name);
         if !info.tags.contains(&cache_info.tag) {
-            cache_info.tag = info.tags[0].clone();
+            cache_info.tag = info.tags.get(0).map_or("".to_string(), |v| v.clone());
         }
 
         Self {
