@@ -7,6 +7,7 @@
   import HomeIcon from "@iconify-svelte/mdi/home";
   import SettingsIcon from "@iconify-svelte/mdi/settings";
   import HistoryIcon from "@iconify-svelte/mdi/clipboard-text-history-outline";
+  import TimerIcon from "@iconify-svelte/mdi/timer";
 
   let { children } = $props();
   let showSidebar = $state(false);
@@ -53,6 +54,9 @@
       <li><a href="/" onclick={toggleSidebar}><HomeIcon class="h-5" />Home</a></li>
       <li>
         <a href="/history" onclick={toggleSidebar}><HistoryIcon class="h-5" />History</a>
+      </li>
+      <li>
+        <a href="/timers" onclick={toggleSidebar}><TimerIcon class="h-5" />Timers</a>
       </li>
       <div class="grow"></div>
       <li>

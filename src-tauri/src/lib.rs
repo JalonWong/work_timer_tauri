@@ -43,7 +43,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             cmd_start_timer,
             cmd_stop_timer,
-            cmd_get_timer_list,
             cmd_get_timer_count,
             cmd_get_timer_status,
             cmd_get_history,
@@ -70,13 +69,13 @@ pub fn run() {
 }
 
 #[tauri::command]
-fn cmd_start_timer(name: &str, tag: &str, state: State<AppState>) {
+fn cmd_start_timer(label: &str, tag: &str, state: State<AppState>) {
     let mut timer = state.count_timer.lock().unwrap();
     stop_and_save(&mut timer, tag, &state);
 
     let settings = state.settings.lock().unwrap();
     for t in settings.timer_list() {
-        if t.name == name {
+        if t.label == label {
             timer.start(t);
             break;
         }
@@ -87,12 +86,6 @@ fn cmd_start_timer(name: &str, tag: &str, state: State<AppState>) {
 fn cmd_stop_timer(tag: &str, state: State<AppState>) {
     let mut timer = state.count_timer.lock().unwrap();
     stop_and_save(&mut timer, tag, &state);
-}
-
-#[tauri::command]
-fn cmd_get_timer_list(state: State<AppState>) -> Vec<TimerSetting> {
-    let settings = state.settings.lock().unwrap();
-    settings.timer_list().into()
 }
 
 #[derive(Serialize, Deserialize)]
@@ -114,7 +107,7 @@ fn cmd_get_timer_count(state: State<AppState>) -> TimerCountRst {
 #[derive(Serialize, Deserialize)]
 pub struct TimerStatusRst {
     pub is_running: bool,
-    pub name: String,
+    pub label: String,
     pub limit_mins: u64,
     pub total_time: u64,
 }
@@ -128,13 +121,13 @@ fn cmd_get_timer_status(state: State<AppState>) -> TimerStatusRst {
     timer_setting.map_or_else(
         || TimerStatusRst {
             is_running,
-            name: "".to_string(),
+            label: "".to_string(),
             limit_mins: 0,
             total_time,
         },
         |s| TimerStatusRst {
             is_running,
-            name: s.name.clone(),
+            label: s.label.clone(),
             limit_mins: s.limit_time,
             total_time,
         },
@@ -228,6 +221,7 @@ fn cmd_get_settings(state: State<AppState>) -> UiSettings {
         theme: settings.theme().to_string(),
         tags: settings.tags().into(),
         tag: settings.current_tag().to_string(),
+        timers: settings.timer_list().into(),
     }
 }
 
@@ -236,17 +230,20 @@ fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
     let mut s = state.settings.lock().unwrap();
     s.set_current_tag(&settings.tag);
     s.set_theme(&settings.theme);
-    s.save();
     s.set_window_info(&settings.win_info);
+    let timers = s.mut_timer_list();
+    *timers = settings.timers;
+    s.save();
     s.save_cache();
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 struct UiSettings {
     win_info: WindowInfo,
     theme: String,
     tags: Vec<String>,
     tag: String,
+    timers: Vec<TimerSetting>,
     // play_audio: bool,
     // audio_file: String,
 }

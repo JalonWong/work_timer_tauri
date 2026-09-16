@@ -48,16 +48,14 @@ impl Settings {
             ],
             timer_list: vec![
                 TimerSetting {
-                    name: "Break".to_string(),
-                    icon: "\u{2615}".to_string(),
+                    label: "\u{2615} Break".to_string(),
                     limit_time: 5,
                     for_work: false,
                     count_up: false,
                     notify: true,
                 },
                 TimerSetting {
-                    name: "Work".to_string(),
-                    icon: "\u{1F4BB}".to_string(),
+                    label: "\u{1F4BB} Work".to_string(),
                     limit_time: 25,
                     for_work: true,
                     count_up: true,
@@ -213,8 +211,7 @@ struct SettingInfo {
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct TimerSetting {
-    pub name: String,
-    pub icon: String,
+    pub label: String,
     /// in minutes
     pub limit_time: u64,
     pub for_work: bool,
@@ -222,11 +219,10 @@ pub struct TimerSetting {
     pub notify: bool,
 }
 
-impl TimerSetting {
-    pub fn new() -> Self {
+impl Default for TimerSetting {
+    fn default() -> Self {
         Self {
-            name: "new".to_string(),
-            icon: String::new(),
+            label: "new".to_string(),
             limit_time: 1,
             for_work: false,
             count_up: false,

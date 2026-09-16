@@ -1,22 +1,15 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { gUserState } from "$lib/state.svelte";
-  import {
-    cmdGetTimerCount,
-    cmdGetTimerStatus,
-    cmdStartTimer,
-    cmdStopTimer,
-    cmdGetTimerList
-  } from "$lib/gen";
+  import { cmdGetTimerCount, cmdGetTimerStatus, cmdStartTimer, cmdStopTimer } from "$lib/gen";
   import type { TimerSetting } from "$lib/gen/types";
   import IconVar from "$lib/IconVar.svelte";
 
   let countString = $state("");
-  let timerName = $state("");
+  let timerLabel = $state("");
   let isTimeout = $state(false);
   let limitMins = $state(0);
   let intervalId: number | null = null;
-  let timerList: TimerSetting[] = $state([]);
   let totalTime = $state("0m");
 
   async function update() {
@@ -28,7 +21,7 @@
     let total_time: number;
     ({
       is_running,
-      name: timerName,
+      label: timerLabel,
       limit_mins: limitMins,
       total_time
     } = await cmdGetTimerStatus());
@@ -51,8 +44,8 @@
     }
   }
 
-  async function start(name: string, tag: string) {
-    await cmdStartTimer({ name, tag });
+  async function start(label: string, tag: string) {
+    await cmdStartTimer({ label, tag });
     updateTimerStatus();
     update();
   }
@@ -64,7 +57,6 @@
   }
 
   onMount(async () => {
-    timerList = await cmdGetTimerList();
     updateTimerStatus();
     update();
   });
@@ -88,13 +80,13 @@
   </div>
   <div class="m-3">
     <div class="flex justify-evenly gap-1">
-      {#each timerList as timer}
+      {#each gUserState.timers as timer}
         <button
           onclick={() =>
-            timerName === timer.name ? stop(gUserState.tag) : start(timer.name, gUserState.tag)}
-          class="btn flex-auto {timerName === timer.name ? '' : 'btn-soft'} btn-primary"
+            timerLabel === timer.label ? stop(gUserState.tag) : start(timer.label, gUserState.tag)}
+          class="btn flex-auto {timerLabel === timer.label ? '' : 'btn-soft'} btn-primary"
         >
-          <IconVar name={timer.icon} class="h-5" />{timer.name}
+          {timer.label}
         </button>
       {/each}
     </div>

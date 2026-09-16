@@ -13,7 +13,7 @@
 </script>
 
 <main>
-  <Header text="Settings"></Header>
+  <Header text="Settings" />
   <div class="mx-4">
     <h2 class="text-lg">Theme</h2>
     <div class="flex gap-3">

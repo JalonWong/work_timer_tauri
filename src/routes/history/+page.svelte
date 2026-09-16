@@ -29,7 +29,7 @@
 </script>
 
 <main class="flex h-screen flex-col">
-  <Header text="History"></Header>
+  <Header text="History" />
   <div class="mx-3 mb-3 flex grow flex-col">
     <div class="flex">
       <div class="mt-2 flex gap-3">
