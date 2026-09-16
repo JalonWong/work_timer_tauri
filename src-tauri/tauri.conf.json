@@ -13,8 +13,9 @@
     "windows": [
       {
         "title": "Work Timer",
-        "width": 800,
-        "height": 500
+        "width": 600,
+        "height": 500,
+        "backgroundColor": "#1d232a"
       }
     ],
     "security": {

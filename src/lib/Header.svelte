@@ -9,7 +9,7 @@
 
 <div class="sticky top-0 bg-base-100 px-2 pt-2">
   <div class="flex">
-    <a href="/" class="btn btn-square h-7 btn-ghost"><BackIcon /></a>
+    <a href="/" class="btn btn-square h-7 btn-ghost"><BackIcon class="h-8" /></a>
     <h1 class="text-xl">
       {text}
     </h1>

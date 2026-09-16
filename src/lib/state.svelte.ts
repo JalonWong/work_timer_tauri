@@ -1,4 +1,5 @@
-import { cmdGetSettings, cmdSaveSettings } from "./gen";
+import { cmdGetSettings, cmdSaveSettings, WindowInfo } from "./gen";
+import { getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 
 export const gUserState = $state({
   theme: "",
@@ -24,8 +25,29 @@ export async function loadSettings() {
 }
 
 export async function saveSettings() {
+  const win = getCurrentWindow();
+
+  const position = await win.innerPosition();
+  let size = await win.innerSize();
+  const osize = await win.outerSize();
+
+  // for wayland bug
+  if (size.width == osize.width) {
+    size.width -= 90;
+  }
+  if (size.height == osize.height) {
+    size.height -= 138;
+  }
+
   cmdSaveSettings({
     settings: {
+      win_info: {
+        maximized: await win.isMaximized(),
+        x: position.x,
+        y: position.y,
+        width: size.width,
+        height: size.height,
+      },
       theme: gUserState.theme,
       tag: gUserState.tag,
       tags: gUserState.tags,

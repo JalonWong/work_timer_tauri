@@ -2,7 +2,7 @@ use chrono::Local;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use std::time::SystemTime;
-use tauri::{Manager, State};
+use tauri::{Manager, PhysicalPosition, PhysicalSize, State};
 
 mod history;
 mod settings;
@@ -11,6 +11,8 @@ mod timer;
 use history::History;
 use settings::{Settings, TimerSetting};
 use timer::Timer;
+
+use crate::settings::WindowInfo;
 
 struct AppState {
     settings: Mutex<Settings>,
@@ -28,6 +30,8 @@ pub fn run() {
     let history = History::new();
     let total_time = init_total_time(&history);
     let settings = Settings::new();
+    let win_info = settings.window_info();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(AppState {
@@ -48,6 +52,19 @@ pub fn run() {
             cmd_get_settings,
             cmd_save_settings,
         ])
+        .setup(|app| {
+            if let Some(win_info) = win_info {
+                let win = app.get_webview_window("main").unwrap();
+                let _ = win.set_position(PhysicalPosition::new(win_info.x, win_info.y));
+                let _ = win.set_size(PhysicalSize::new(win_info.width, win_info.height));
+                if win_info.maximized {
+                    let _ = win.maximize();
+                } else {
+                    let _ = win.unmaximize();
+                }
+            }
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -205,7 +222,9 @@ fn get_time_from_offset_days(days: i64) -> SystemTime {
 #[tauri::command]
 fn cmd_get_settings(state: State<AppState>) -> UiSettings {
     let settings = state.settings.lock().unwrap();
+    let win_info = settings.window_info().unwrap_or_default();
     UiSettings {
+        win_info,
         theme: settings.theme().to_string(),
         tags: settings.tags().into(),
         tag: settings.current_tag().to_string(),
@@ -218,11 +237,13 @@ fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
     s.set_current_tag(&settings.tag);
     s.set_theme(&settings.theme);
     s.save();
+    s.set_window_info(&settings.win_info);
     s.save_cache();
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct UiSettings {
+    win_info: WindowInfo,
     theme: String,
     tags: Vec<String>,
     tag: String,

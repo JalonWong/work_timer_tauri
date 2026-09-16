@@ -84,7 +84,6 @@ impl Settings {
 
     fn load_cache(file_name: &Path) -> CacheInfo {
         let mut info = CacheInfo {
-            maximized: false,
             window: None,
             tag: "".to_string(),
         };
@@ -106,20 +105,12 @@ impl Settings {
         fs::write(&self.cache_name, toml::to_string(&self.cache_info).unwrap()).unwrap();
     }
 
-    pub fn window_info(&self) -> Option<&WindowInfo> {
-        self.cache_info.window.as_ref()
+    pub fn window_info(&self) -> Option<WindowInfo> {
+        self.cache_info.window.clone()
     }
 
-    pub fn set_window_info(&mut self, info: WindowInfo) {
-        self.cache_info.window = Some(info);
-    }
-
-    pub fn window_maximized(&self) -> bool {
-        self.cache_info.maximized
-    }
-
-    pub fn set_window_maximized(&mut self, maximized: bool) {
-        self.cache_info.maximized = maximized;
+    pub fn set_window_info(&mut self, info: &WindowInfo) {
+        self.cache_info.window = Some(info.clone());
     }
 
     pub fn tags(&self) -> &[String] {
@@ -196,17 +187,17 @@ pub fn get_config_dir() -> PathBuf {
 
 #[derive(Deserialize, Serialize)]
 struct CacheInfo {
-    maximized: bool,
     window: Option<WindowInfo>,
     tag: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct WindowInfo {
-    pub x: f32,
-    pub y: f32,
-    pub width: f32,
-    pub height: f32,
+    pub maximized: bool,
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
 }
 
 // ----------------------------------------------------------------------------
