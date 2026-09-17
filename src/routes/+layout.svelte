@@ -2,7 +2,7 @@
   import "./layout.css";
   import { onMount } from "svelte";
   import { getCurrentWindow } from "@tauri-apps/api/window";
-  import { loadSettings, saveSettings } from "$lib/state.svelte";
+  import { loadSettings, saveSettings, stopTimer } from "$lib/state.svelte";
   import MenuIcon from "@iconify-svelte/mdi/menu";
   import HomeIcon from "@iconify-svelte/mdi/home";
   import SettingsIcon from "@iconify-svelte/mdi/settings";
@@ -22,6 +22,7 @@
     const unlisten = getCurrentWindow().onCloseRequested(async (event) => {
       event.preventDefault();
       try {
+        await stopTimer();
         await saveSettings();
       } finally {
         await getCurrentWindow().destroy(); // actually close

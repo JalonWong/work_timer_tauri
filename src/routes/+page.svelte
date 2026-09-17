@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { gUserState } from "$lib/state.svelte";
+  import { gUserState, stopTimer } from "$lib/state.svelte";
   import { cmdGetTimerCount, cmdGetTimerStatus, cmdStartTimer, cmdStopTimer } from "$lib/gen";
   import type { TimerSetting } from "$lib/gen/types";
   import IconVar from "$lib/IconVar.svelte";
@@ -44,14 +44,14 @@
     }
   }
 
-  async function start(label: string, tag: string) {
-    await cmdStartTimer({ label, tag });
+  async function start(label: string) {
+    await cmdStartTimer({ label, tag: gUserState.tag });
     updateTimerStatus();
     update();
   }
 
-  async function stop(tag: string) {
-    await cmdStopTimer({ tag });
+  async function stop() {
+    stopTimer();
     updateTimerStatus();
     update();
   }
@@ -82,8 +82,7 @@
     <div class="flex justify-evenly gap-1">
       {#each gUserState.timers as timer}
         <button
-          onclick={() =>
-            timerLabel === timer.label ? stop(gUserState.tag) : start(timer.label, gUserState.tag)}
+          onclick={() => (timerLabel === timer.label ? stop() : start(timer.label))}
           class="btn flex-auto {timerLabel === timer.label ? '' : 'btn-soft'} btn-primary"
         >
           {timer.label}
