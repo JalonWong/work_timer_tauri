@@ -8,13 +8,12 @@ url="https://github.com/you/myapp"
 license=('MIT')
 
 package() {
-  # binary from your tauri build
+  install -Dm644 "${startdir}/../src-tauri/icons/icon.svg" \
+    "${pkgdir}/usr/share/pixmaps/${pkgname}.svg"
+
   install -Dm755 "${startdir}/../src-tauri/target/release/${pkgname}" \
     "${pkgdir}/usr/bin/${pkgname}"
 
-  install -Dm644 "${startdir}/../src-tauri/target/release/bundle/deb/${{pkgname}}_${pkgver}_amd64/data/usr/share/applications/${pkgname}.desktop" \
+  install -Dm644 "${startdir}/../src-tauri/target/release/bundle/deb/${pkgname}_${pkgver}_amd64/data/usr/share/applications/${pkgname}.desktop" \
     "${pkgdir}/usr/share/applications/${pkgname}.desktop"
-
-  install -Dm644 "${startdir}/../src-tauri/icons/icon.svg" \
-    "${pkgdir}/usr/share/pixmaps/${pkgname}.svg"
 }
