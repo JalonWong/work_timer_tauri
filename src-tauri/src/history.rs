@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use sled::{Db, IVec};
 use std::{
+    fs::File,
+    io::Write,
     path::PathBuf,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -74,22 +76,23 @@ impl History {
         self.db.flush().ok();
     }
 
-    pub fn export_to_csv(&self, file_path: PathBuf) {
-        let mut writer = csv::Writer::from_path(file_path).unwrap();
+    pub fn export_to_csv(&self, file_name: &str) -> std::io::Result<()> {
+        let mut f = File::create(file_name)?;
+        f.write_all(b"StartTime,Duration,Label\n")?;
+        let mut writer = csv::Writer::from_writer(f);
         for record in self.get_records(&SystemTime::UNIX_EPOCH, &SystemTime::now(), true) {
             let dt = record
                 .start_time
                 .duration_since(SystemTime::UNIX_EPOCH)
-                .unwrap();
-            writer
-                .write_record(&[
-                    dt.as_secs().to_string(),
-                    record.duration.to_string(),
-                    record.label,
-                ])
-                .unwrap();
+                .unwrap_or_default();
+            writer.write_record(&[
+                dt.as_secs().to_string(),
+                record.duration.to_string(),
+                record.label,
+            ])?;
         }
-        writer.flush().unwrap();
+        writer.flush()?;
+        Ok(())
     }
 
     fn to_record(key: IVec, value: IVec) -> Option<Record> {

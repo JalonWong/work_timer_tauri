@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { save } from "@tauri-apps/plugin-dialog";
   import Header from "$lib/Header.svelte";
   import type { HistoryInfo } from "$lib/gen/types";
-  import { cmdGetHistory, cmdDeleteRecord, cmdModifyRecord } from "$lib/gen";
+  import { cmdGetHistory, cmdDeleteRecord, cmdModifyRecord, cmdExportToCsv } from "$lib/gen";
   import EditIcon from "@iconify-svelte/mdi/edit";
   import Modal from "$lib/Modal.svelte";
 
@@ -21,6 +22,20 @@
       offsetDays = -6;
     }
     history = await cmdGetHistory({ offsetDays, reverse: true });
+  }
+
+  async function exportToCsv() {
+    const fileName = await save({
+      filters: [
+        {
+          name: "*.csv",
+          extensions: ["csv"]
+        }
+      ]
+    });
+    if (fileName) {
+      cmdExportToCsv({ fileName });
+    }
   }
 
   onMount(async () => {
@@ -46,7 +61,7 @@
       {/each}
 
       <div class="grow"></div>
-      <button class="btn h-7">Export to CSV</button>
+      <button class="btn h-7" onclick={() => exportToCsv()}>Export to CSV</button>
     </div></Header
   >
   <div class="mx-3 mb-3 flex grow flex-col">

@@ -1,7 +1,6 @@
 use chrono::Local;
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
-use std::time::SystemTime;
+use std::{sync::Mutex, time::SystemTime};
 use tauri::{Manager, PhysicalPosition, PhysicalSize, State};
 
 mod history;
@@ -33,6 +32,7 @@ pub fn run() {
     let win_info = settings.window_info();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(AppState {
             settings: Mutex::new(settings),
@@ -48,6 +48,7 @@ pub fn run() {
             cmd_get_history,
             cmd_delete_record,
             cmd_modify_record,
+            cmd_export_to_csv,
             cmd_get_settings,
             cmd_save_settings,
         ])
@@ -191,6 +192,14 @@ fn stop_and_save(timer: &mut Timer, state: &State<AppState>) {
             .lock()
             .unwrap()
             .add_record(timer.get_start_time(), duration, &settings.label);
+    }
+}
+
+#[tauri::command]
+fn cmd_export_to_csv(file_name: &str, state: State<AppState>) {
+    let history = state.history.lock().unwrap();
+    if let Err(e) = history.export_to_csv(file_name) {
+        println!("{}", e);
     }
 }
 
