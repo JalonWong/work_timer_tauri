@@ -4,6 +4,8 @@ use std::{
     path::Path,
     thread,
 };
+use tauri::AppHandle;
+use tauri_plugin_notification::NotificationExt;
 
 pub fn play_a_sound(file_name: &Path) -> Result<()> {
     let f = File::open(file_name)?;
@@ -17,4 +19,13 @@ pub fn play_a_sound(file_name: &Path) -> Result<()> {
         player.sleep_until_end();
     });
     Ok(())
+}
+
+pub fn notify(app: AppHandle) {
+    let _ = app
+        .notification()
+        .builder()
+        .title("Timer done")
+        .auto_cancel()
+        .show();
 }

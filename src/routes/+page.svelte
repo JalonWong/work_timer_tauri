@@ -1,12 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { gUserState, stopTimer } from "$lib/state.svelte";
-  import { cmdGetTimerCount, cmdGetTimerStatus, cmdStartTimer, cmdPlayASound } from "$lib/gen";
-  import {
-    isPermissionGranted,
-    requestPermission,
-    sendNotification
-  } from "@tauri-apps/plugin-notification";
+  import { cmdGetTimerCount, cmdGetTimerStatus, cmdStartTimer, cmdTimeout } from "$lib/gen";
 
   let timerLabel = $state("");
   let limitMins = $state(0);
@@ -23,7 +18,7 @@
     gUserState.countString = count_string;
     if (gUserState.isTimeout != is_time_out) {
       gUserState.isTimeout = is_time_out;
-      notify();
+      cmdTimeout();
     }
   }
 
@@ -65,31 +60,6 @@
     stopTimer();
     updateTimerStatus();
     update();
-  }
-
-  async function notify() {
-    const status = await cmdGetTimerStatus();
-
-    // Do you have permission to send a notification?
-    let permissionGranted = await isPermissionGranted();
-
-    // If not we need to request it
-    if (!permissionGranted) {
-      const permission = await requestPermission();
-      permissionGranted = permission === "granted";
-    }
-
-    // Once permission has been granted we can send the notification
-    // if (permissionGranted) {
-    //   sendNotification({
-    //     title: "Tauri",
-    //     body: "Tauri is awesome!"
-    //   });
-    // }
-
-    if (status.play_a_sound) {
-      cmdPlayASound();
-    }
   }
 </script>
 

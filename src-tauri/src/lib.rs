@@ -4,8 +4,8 @@ use std::{fs, sync::Mutex, time::SystemTime};
 use tauri::{AppHandle, Manager, State, path::BaseDirectory};
 use tauri_plugin_window_state::StateFlags;
 
-mod audio;
 mod history;
+mod notification;
 mod settings;
 mod timer;
 
@@ -45,13 +45,13 @@ pub fn run() {
             cmd_stop_timer,
             cmd_get_timer_count,
             cmd_get_timer_status,
+            cmd_timeout,
             cmd_get_history,
             cmd_delete_record,
             cmd_modify_record,
             cmd_export_to_csv,
             cmd_get_settings,
             cmd_save_settings,
-            cmd_play_a_sound,
         ])
         .setup(|app| {
             let data_dir = app.path().app_data_dir().unwrap();
@@ -119,7 +119,6 @@ pub struct TimerStatusRst {
     pub label: String,
     pub limit_mins: u64,
     pub total_time: u64,
-    pub play_a_sound: bool,
 }
 
 #[tauri::command]
@@ -134,14 +133,12 @@ fn cmd_get_timer_status(state: State<AppState>) -> TimerStatusRst {
             label: "".to_string(),
             limit_mins: 0,
             total_time,
-            play_a_sound: false,
         },
         |s| TimerStatusRst {
             is_running,
             label: s.label.clone(),
             limit_mins: s.limit_time,
             total_time,
-            play_a_sound: s.play_a_sound,
         },
     )
 }
@@ -258,13 +255,22 @@ struct UiSettings {
 }
 
 #[tauri::command]
-fn cmd_play_a_sound(app: AppHandle) {
-    let sound_file = app
-        .path()
-        .resolve("../static/sound.mp3", BaseDirectory::Resource)
-        .unwrap();
+fn cmd_timeout(app: AppHandle, state: State<AppState>) {
+    let timer = state.count_timer.lock().unwrap();
+    if let Some(s) = timer.get_setting() {
+        if s.play_a_sound {
+            let sound_file = app
+                .path()
+                .resolve("../static/sound.mp3", BaseDirectory::Resource)
+                .unwrap();
 
-    if let Err(e) = audio::play_a_sound(&sound_file) {
-        println!("cmd_play_a_sound: {e} {}", sound_file.display());
+            if let Err(e) = notification::play_a_sound(&sound_file) {
+                println!("cmd_play_a_sound: {e} {}", sound_file.display());
+            }
+        }
+
+        if s.notification {
+            notification::notify(app);
+        }
     }
 }

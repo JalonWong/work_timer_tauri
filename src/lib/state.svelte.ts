@@ -60,6 +60,7 @@ export function newTimer() {
     for_work: false,
     count_up: false,
     play_a_sound: false,
+    notification: false,
   })
 }
 

@@ -27,7 +27,8 @@ impl Settings {
                     limit_time: 5,
                     for_work: false,
                     count_up: false,
-                    play_a_sound: false,
+                    play_a_sound: true,
+                    notification: false,
                 },
                 TimerSetting {
                     label: "\u{1F4BB} Work".to_string(),
@@ -35,6 +36,7 @@ impl Settings {
                     for_work: true,
                     count_up: true,
                     play_a_sound: true,
+                    notification: true,
                 },
             ],
         };
@@ -92,6 +94,7 @@ pub struct TimerSetting {
     pub for_work: bool,
     pub count_up: bool,
     pub play_a_sound: bool,
+    pub notification: bool,
 }
 
 impl Default for TimerSetting {
@@ -102,6 +105,7 @@ impl Default for TimerSetting {
             for_work: false,
             count_up: false,
             play_a_sound: false,
+            notification: false,
         }
     }
 }
