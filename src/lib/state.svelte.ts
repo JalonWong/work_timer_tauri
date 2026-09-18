@@ -9,9 +9,15 @@ export async function stopTimer() {
 export const gUserState: {
   theme: string;
   timers: TimerSetting[];
+  intervalId: number | null;
+  countString: string;
+  isTimeout: boolean;
 } = $state({
   theme: "",
   timers: [],
+  intervalId: null,
+  countString: "",
+  isTimeout: false,
 });
 
 export function getTheme(): string {
@@ -53,7 +59,7 @@ export function newTimer() {
     limit_time: 5,
     for_work: false,
     count_up: false,
-    notify: false,
+    play_a_sound: false,
   })
 }
 
@@ -65,7 +71,16 @@ export function moveTimer(index: number, up: boolean) {
   moveItemInPlace(gUserState.timers, index, up);
 }
 
-export async function loadSettings() {
+export async function saveSettings() {
+  cmdSaveSettings({
+    settings: {
+      theme: gUserState.theme,
+      timers: gUserState.timers,
+    }
+  });
+}
+
+export async function onStart() {
   let settings = await cmdGetSettings();
   gUserState.theme = settings.theme;
   gUserState.timers = settings.timers;
@@ -74,12 +89,7 @@ export async function loadSettings() {
   restoreStateCurrent(StateFlags.ALL);
 }
 
-export async function saveSettings() {
+export async function onExit() {
   saveWindowState(StateFlags.ALL);
-  cmdSaveSettings({
-    settings: {
-      theme: gUserState.theme,
-      timers: gUserState.timers,
-    }
-  });
+  saveSettings();
 }

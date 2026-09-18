@@ -21,22 +21,20 @@ impl Settings {
 
         let mut info = SettingInfo {
             theme: "".to_string(),
-            audio_file: "assets/notify.wav".to_string(),
-            play_audio: true,
             timer_list: vec![
                 TimerSetting {
                     label: "\u{2615} Break".to_string(),
                     limit_time: 5,
                     for_work: false,
                     count_up: false,
-                    notify: true,
+                    play_a_sound: false,
                 },
                 TimerSetting {
                     label: "\u{1F4BB} Work".to_string(),
                     limit_time: 25,
                     for_work: true,
                     count_up: true,
-                    notify: false,
+                    play_a_sound: true,
                 },
             ],
         };
@@ -76,26 +74,6 @@ impl Settings {
     pub fn mut_timer_list(&mut self) -> &mut Vec<TimerSetting> {
         &mut self.info.timer_list
     }
-
-    pub fn audio_file(&self) -> Option<&str> {
-        if self.info.play_audio {
-            Some(&self.info.audio_file)
-        } else {
-            None
-        }
-    }
-
-    pub fn mut_audio_file(&mut self) -> &mut String {
-        &mut self.info.audio_file
-    }
-
-    pub fn set_play_audio(&mut self, v: bool) {
-        self.info.play_audio = v;
-    }
-
-    pub fn play_audio(&self) -> bool {
-        self.info.play_audio
-    }
 }
 
 // ----------------------------------------------------------------------------
@@ -103,8 +81,6 @@ impl Settings {
 #[derive(Deserialize, Serialize)]
 struct SettingInfo {
     theme: String,
-    play_audio: bool,
-    audio_file: String,
     timer_list: Vec<TimerSetting>,
 }
 
@@ -115,7 +91,7 @@ pub struct TimerSetting {
     pub limit_time: u64,
     pub for_work: bool,
     pub count_up: bool,
-    pub notify: bool,
+    pub play_a_sound: bool,
 }
 
 impl Default for TimerSetting {
@@ -125,7 +101,7 @@ impl Default for TimerSetting {
             limit_time: 1,
             for_work: false,
             count_up: false,
-            notify: false,
+            play_a_sound: false,
         }
     }
 }

@@ -48,14 +48,6 @@ impl Timer {
         self.setting.as_ref()
     }
 
-    pub fn notify(&self) -> bool {
-        if let Some(s) = self.setting.as_ref() {
-            s.notify
-        } else {
-            false
-        }
-    }
-
     pub fn status(&self) -> Status {
         self.status
     }

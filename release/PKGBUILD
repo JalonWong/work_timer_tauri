@@ -1,6 +1,6 @@
 # Maintainer: Jalon Wong <jalonwong@gmail.com>
 pkgname=work_timer_tauri
-pkgver=0.3.0
+pkgver=0.3.1
 pkgrel=1
 pkgdesc="A Work Timer Application"
 arch=('x86_64')
@@ -10,6 +10,9 @@ license=('MIT')
 package() {
   install -Dm644 "${startdir}/../src-tauri/icons/icon.svg" \
     "${pkgdir}/usr/share/pixmaps/${pkgname}.svg"
+
+  install -Dm644 "${startdir}/../src-tauri/target/release/_up_/static/sound.mp3" \
+    "${pkgdir}/usr/lib/${pkgname}/_up_/static/sound.mp3"
 
   install -Dm755 "${startdir}/../src-tauri/target/release/${pkgname}" \
     "${pkgdir}/usr/bin/${pkgname}"

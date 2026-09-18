@@ -3,7 +3,7 @@
   description = "A Work Timer Application"
   edition = "2024"
   name = "work_timer_tauri"
-  version = "0.3.0"
+  version = "0.3.1"
 
   # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -21,12 +21,13 @@
 [dependencies]
   chrono = "0.4"
   csv = "1.4"
-  dirs = "7.0"
+  rodio = "0.22"
   serde = { version = "1", features = ["derive"] }
   serde_json = "1"
   sled = "0.34"
   tauri = { version = "2", features = [] }
   tauri-plugin-dialog = "2"
+  tauri-plugin-notification = "2"
   tauri-plugin-opener = "2"
   toml = "1"
 
@@ -40,4 +41,4 @@
   strip = true
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-window-state = "2"
+  tauri-plugin-window-state = "2"

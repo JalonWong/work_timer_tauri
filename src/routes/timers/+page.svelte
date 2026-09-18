@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import Header from "$lib/Header.svelte";
-  import { gUserState, newTimer, moveTimer, deleteTimer } from "$lib/state.svelte";
+  import { gUserState, newTimer, moveTimer, deleteTimer, saveSettings } from "$lib/state.svelte";
   import TrashIcon from "@iconify-svelte/mdi/trash-can";
   import AddIcon from "@iconify-svelte/mdi/add";
   import UpIcon from "@iconify-svelte/mdi/chevron-up";
   import DownIcon from "@iconify-svelte/mdi/chevron-down";
+
+  onDestroy(() => saveSettings());
 </script>
 
 <main>
@@ -61,10 +64,14 @@
                 />
                 Count up
               </label>
-              <!-- <label class="label">
-                <input type="checkbox" class="checkbox" bind:checked={timer.notify} />
-                Play a sound
-              </label> -->
+              <label class="label">
+                <input
+                  type="checkbox"
+                  class="checkbox checkbox-primary"
+                  bind:checked={timer.play_a_sound}
+                />
+                Play a sound on timeout
+              </label>
             </div>
           </fieldset>
         </div>

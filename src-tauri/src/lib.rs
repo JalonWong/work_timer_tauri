@@ -1,9 +1,10 @@
 use chrono::Local;
 use serde::{Deserialize, Serialize};
 use std::{fs, sync::Mutex, time::SystemTime};
-use tauri::{Manager, State};
+use tauri::{AppHandle, Manager, State, path::BaseDirectory};
 use tauri_plugin_window_state::StateFlags;
 
+mod audio;
 mod history;
 mod settings;
 mod timer;
@@ -26,6 +27,7 @@ struct MainState {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_notification::init())
         .plugin(
             tauri_plugin_window_state::Builder::new()
                 .with_state_flags(
@@ -49,11 +51,12 @@ pub fn run() {
             cmd_export_to_csv,
             cmd_get_settings,
             cmd_save_settings,
+            cmd_play_a_sound,
         ])
         .setup(|app| {
-            let mut data_dir = app.path().app_data_dir().unwrap();
+            let data_dir = app.path().app_data_dir().unwrap();
             #[cfg(debug_assertions)]
-            data_dir.push("debug");
+            let data_dir = data_dir.join("debug");
 
             if !data_dir.exists() {
                 fs::create_dir_all(&data_dir).unwrap();
@@ -116,6 +119,7 @@ pub struct TimerStatusRst {
     pub label: String,
     pub limit_mins: u64,
     pub total_time: u64,
+    pub play_a_sound: bool,
 }
 
 #[tauri::command]
@@ -124,18 +128,20 @@ fn cmd_get_timer_status(state: State<AppState>) -> TimerStatusRst {
     let timer = state.count_timer.lock().unwrap();
     let timer_setting = timer.get_setting();
     let is_running = timer.status() != timer::Status::Stopped;
-    timer_setting.map_or_else(
-        || TimerStatusRst {
+    timer_setting.map_or(
+        TimerStatusRst {
             is_running,
             label: "".to_string(),
             limit_mins: 0,
             total_time,
+            play_a_sound: false,
         },
         |s| TimerStatusRst {
             is_running,
             label: s.label.clone(),
             limit_mins: s.limit_time,
             total_time,
+            play_a_sound: s.play_a_sound,
         },
     )
 }
@@ -203,7 +209,7 @@ fn stop_and_save(timer: &mut Timer, state: &State<AppState>) {
 fn cmd_export_to_csv(file_name: &str, state: State<AppState>) {
     let history = state.history.lock().unwrap();
     if let Err(e) = history.export_to_csv(file_name) {
-        println!("{}", e);
+        println!("cmd_export_to_csv: {e}");
     }
 }
 
@@ -249,4 +255,16 @@ struct UiSettings {
     timers: Vec<TimerSetting>,
     // play_audio: bool,
     // audio_file: String,
+}
+
+#[tauri::command]
+fn cmd_play_a_sound(app: AppHandle) {
+    let sound_file = app
+        .path()
+        .resolve("../static/sound.mp3", BaseDirectory::Resource)
+        .unwrap();
+
+    if let Err(e) = audio::play_a_sound(&sound_file) {
+        println!("cmd_play_a_sound: {e} {}", sound_file.display());
+    }
 }

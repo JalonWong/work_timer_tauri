@@ -2,9 +2,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "cargo",
-      "command": "tauri",
+      "type": "shell",
+      "command": "pnpm",
       "args": [
+        "tauri",
         "dev"
       ],
       "problemMatcher": [
