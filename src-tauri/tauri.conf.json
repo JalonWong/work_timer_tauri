@@ -15,8 +15,7 @@
         "title": "Work Timer",
         "visible": false,
         "width": 600,
-        "height": 500,
-        "backgroundColor": "#1d232a"
+        "height": 500
       }
     ],
     "security": {

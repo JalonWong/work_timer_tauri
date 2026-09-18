@@ -1,6 +1,6 @@
 import { cmdGetSettings, cmdSaveSettings, cmdStopTimer } from "./gen";
 import type { TimerSetting } from "./gen"
-import { getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 export async function stopTimer() {
   await cmdStopTimer({ tag: gUserState.tag });
@@ -88,6 +88,9 @@ export async function loadSettings() {
   gUserState.theme = settings.theme;
   applyTheme(settings.theme);
   gUserState.timers = settings.timers;
+
+  const win = getCurrentWindow();
+  win.show();
 }
 
 export async function saveSettings() {

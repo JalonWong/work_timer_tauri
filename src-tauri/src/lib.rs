@@ -62,7 +62,7 @@ pub fn run() {
                     let _ = win.unmaximize();
                 }
             }
-            let _ = win.show();
+            // let _ = win.show();
             Ok(())
         })
         .run(tauri::generate_context!())

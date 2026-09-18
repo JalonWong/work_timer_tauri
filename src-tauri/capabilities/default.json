@@ -6,8 +6,10 @@
     "main"
   ],
   "permissions": [
-    "core:default",
     "opener:default",
+    "core:default",
+    "core:app:allow-version",
+    "core:window:allow-show",
     "core:window:allow-close",
     "core:window:allow-destroy",
     "core:window:allow-outer-position",
