@@ -1,7 +1,8 @@
 use chrono::Local;
 use serde::{Deserialize, Serialize};
 use std::{sync::Mutex, time::SystemTime};
-use tauri::{Manager, PhysicalPosition, PhysicalSize, State};
+use tauri::State;
+use tauri_plugin_window_state::StateFlags;
 
 mod history;
 mod settings;
@@ -10,8 +11,6 @@ mod timer;
 use history::History;
 use settings::{Settings, TimerSetting};
 use timer::Timer;
-
-use crate::settings::WindowInfo;
 
 struct AppState {
     settings: Mutex<Settings>,
@@ -29,9 +28,18 @@ pub fn run() {
     let history = History::new();
     let total_time = init_total_time(&history);
     let settings = Settings::new();
-    let win_info = settings.window_info();
 
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_window_state::Builder::new()
+                .with_state_flags(
+                    StateFlags::POSITION
+                        | StateFlags::SIZE
+                        | StateFlags::MAXIMIZED
+                        | StateFlags::FULLSCREEN,
+                )
+                .build(),
+        )
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(AppState {
@@ -52,20 +60,6 @@ pub fn run() {
             cmd_get_settings,
             cmd_save_settings,
         ])
-        .setup(|app| {
-            let win = app.get_webview_window("main").unwrap();
-            if let Some(win_info) = win_info {
-                let _ = win.set_size(PhysicalSize::new(win_info.width, win_info.height));
-                let _ = win.set_position(PhysicalPosition::new(win_info.x, win_info.y));
-                if win_info.maximized {
-                    let _ = win.maximize();
-                } else {
-                    let _ = win.unmaximize();
-                }
-            }
-            // let _ = win.show();
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -225,9 +219,7 @@ fn get_time_from_offset_days(days: i64) -> SystemTime {
 #[tauri::command]
 fn cmd_get_settings(state: State<AppState>) -> UiSettings {
     let settings = state.settings.lock().unwrap();
-    let win_info = settings.window_info().unwrap_or_default();
     UiSettings {
-        win_info,
         theme: settings.theme().to_string(),
         timers: settings.timer_list().into(),
     }
@@ -238,14 +230,11 @@ fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
     let mut s = state.settings.lock().unwrap();
     s.set_theme(&settings.theme);
     *s.mut_timer_list() = settings.timers;
-    s.set_window_info(&settings.win_info);
     s.save();
-    s.save_cache();
 }
 
 #[derive(Serialize, Deserialize)]
 struct UiSettings {
-    win_info: WindowInfo,
     theme: String,
     timers: Vec<TimerSetting>,
     // play_audio: bool,

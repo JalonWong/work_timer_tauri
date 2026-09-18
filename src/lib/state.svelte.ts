@@ -1,6 +1,6 @@
 import { cmdGetSettings, cmdSaveSettings, cmdStopTimer } from "./gen";
 import type { TimerSetting } from "./gen"
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { saveWindowState, restoreStateCurrent, StateFlags } from '@tauri-apps/plugin-window-state';
 
 export async function stopTimer() {
   await cmdStopTimer();
@@ -68,37 +68,16 @@ export function moveTimer(index: number, up: boolean) {
 export async function loadSettings() {
   let settings = await cmdGetSettings();
   gUserState.theme = settings.theme;
-  applyTheme(settings.theme);
   gUserState.timers = settings.timers;
 
-  const win = getCurrentWindow();
-  win.show();
+  await applyTheme(settings.theme);
+  restoreStateCurrent(StateFlags.ALL);
 }
 
 export async function saveSettings() {
-  const win = getCurrentWindow();
-
-  const position = await win.outerPosition();
-  let size = await win.innerSize();
-  const osize = await win.outerSize();
-
-  // for wayland bug
-  // if (size.width == osize.width) {
-  //   size.width -= 90;
-  // }
-  // if (size.height == osize.height) {
-  //   size.height -= 138;
-  // }
-
+  saveWindowState(StateFlags.ALL);
   cmdSaveSettings({
     settings: {
-      win_info: {
-        maximized: await win.isMaximized(),
-        x: position.x,
-        y: position.y,
-        width: size.width,
-        height: size.height,
-      },
       theme: gUserState.theme,
       timers: gUserState.timers,
     }

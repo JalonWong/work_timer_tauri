@@ -5,8 +5,6 @@ use std::{
 };
 
 pub struct Settings {
-    cache_name: PathBuf,
-    cache_info: CacheInfo,
     file_name: PathBuf,
     info: SettingInfo,
 }
@@ -21,14 +19,8 @@ impl Settings {
         file_name.push("settings.toml");
 
         let info = Self::load_settings(&file_name);
-        let cache_info = Self::load_cache(&cache_name);
 
-        Self {
-            cache_name,
-            cache_info,
-            file_name,
-            info,
-        }
+        Self { file_name, info }
     }
 
     fn load_settings(file_name: &Path) -> SettingInfo {
@@ -72,32 +64,8 @@ impl Settings {
         info
     }
 
-    fn load_cache(file_name: &Path) -> CacheInfo {
-        let mut info = CacheInfo { window: None };
-
-        if file_name.exists() {
-            let toml_str = fs::read_to_string(file_name).unwrap();
-            if let Ok(i) = toml::from_str(&toml_str) {
-                info = i;
-            }
-        }
-        info
-    }
-
     pub fn save(&self) {
         fs::write(&self.file_name, toml::to_string(&self.info).unwrap()).unwrap();
-    }
-
-    pub fn save_cache(&self) {
-        fs::write(&self.cache_name, toml::to_string(&self.cache_info).unwrap()).unwrap();
-    }
-
-    pub fn window_info(&self) -> Option<WindowInfo> {
-        self.cache_info.window.clone()
-    }
-
-    pub fn set_window_info(&mut self, info: &WindowInfo) {
-        self.cache_info.window = Some(info.clone());
     }
 
     pub fn theme(&self) -> &str {
@@ -110,10 +78,6 @@ impl Settings {
 
     pub fn timer_list(&self) -> &[TimerSetting] {
         &self.info.timer_list
-    }
-
-    pub fn add_timer(&mut self, timer: TimerSetting) {
-        self.info.timer_list.push(timer);
     }
 
     pub fn mut_timer_list(&mut self) -> &mut Vec<TimerSetting> {
@@ -152,22 +116,6 @@ pub fn get_config_dir() -> PathBuf {
         fs::create_dir_all(&path).unwrap();
     }
     path
-}
-
-// ----------------------------------------------------------------------------
-
-#[derive(Deserialize, Serialize)]
-struct CacheInfo {
-    window: Option<WindowInfo>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone, Default)]
-pub struct WindowInfo {
-    pub maximized: bool,
-    pub x: u32,
-    pub y: u32,
-    pub width: u32,
-    pub height: u32,
 }
 
 // ----------------------------------------------------------------------------
