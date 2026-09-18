@@ -34,12 +34,12 @@ impl Timer {
         self.status = Status::Started;
     }
 
-    pub fn stop(&mut self) -> Option<u64> {
+    pub fn stop(&mut self) -> Option<(u64, TimerSetting)> {
         self.status = Status::Stopped;
         if let Some(s) = self.setting.take()
             && s.for_work
         {
-            return Some(self.count);
+            return Some((self.count, s));
         }
         None
     }

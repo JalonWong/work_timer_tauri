@@ -8,7 +8,6 @@
   import SettingsIcon from "@iconify-svelte/mdi/settings";
   import HistoryIcon from "@iconify-svelte/mdi/clipboard-text-history-outline";
   import TimerIcon from "@iconify-svelte/mdi/timer";
-  import TagIcon from "@iconify-svelte/mdi/tag";
 
   let { children } = $props();
   let showSidebar = $state(false);
@@ -59,9 +58,6 @@
       </li>
       <li>
         <a href="/timers" onclick={toggleSidebar}><TimerIcon class="h-5" />Timers</a>
-      </li>
-      <li>
-        <a href="/tags" onclick={toggleSidebar}><TagIcon class="h-5" />Tags</a>
       </li>
       <div class="grow"></div>
       <li>

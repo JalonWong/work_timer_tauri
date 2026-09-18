@@ -70,9 +70,9 @@ pub fn run() {
 }
 
 #[tauri::command]
-fn cmd_start_timer(label: &str, tag: &str, state: State<AppState>) {
+fn cmd_start_timer(label: &str, state: State<AppState>) {
     let mut timer = state.count_timer.lock().unwrap();
-    stop_and_save(&mut timer, tag, &state);
+    stop_and_save(&mut timer, &state);
 
     let settings = state.settings.lock().unwrap();
     for t in settings.timer_list() {
@@ -84,9 +84,9 @@ fn cmd_start_timer(label: &str, tag: &str, state: State<AppState>) {
 }
 
 #[tauri::command]
-fn cmd_stop_timer(tag: &str, state: State<AppState>) {
+fn cmd_stop_timer(state: State<AppState>) {
     let mut timer = state.count_timer.lock().unwrap();
-    stop_and_save(&mut timer, tag, &state);
+    stop_and_save(&mut timer, &state);
 }
 
 #[derive(Serialize, Deserialize)]
@@ -141,7 +141,7 @@ pub struct HistoryInfo {
     pub start_time: String,
     pub duration: String,
     pub duration_secs: u64,
-    pub tag: String,
+    pub label: String,
 }
 
 #[tauri::command]
@@ -166,7 +166,7 @@ fn cmd_get_history(
                 .to_string(),
             duration: crate::timer::secs_to_string(r.duration, ""),
             duration_secs: r.duration,
-            tag: r.tag.clone(),
+            label: r.label.clone(),
         })
         .collect()
 }
@@ -178,19 +178,19 @@ fn cmd_delete_record(key: u64, state: State<AppState>) {
 }
 
 #[tauri::command]
-fn cmd_modify_record(key: u64, duration: u64, tag: &str, state: State<AppState>) {
+fn cmd_modify_record(key: u64, duration: u64, label: &str, state: State<AppState>) {
     let mut history = state.history.lock().unwrap();
-    history.modify_record(key, duration, tag);
+    history.modify_record(key, duration, label);
 }
 
-fn stop_and_save(timer: &mut Timer, tag: &str, state: &State<AppState>) {
-    if let Some(duration) = timer.stop() {
+fn stop_and_save(timer: &mut Timer, state: &State<AppState>) {
+    if let Some((duration, settings)) = timer.stop() {
         state.state.lock().unwrap().total_time += duration;
         state
             .history
             .lock()
             .unwrap()
-            .add_record(timer.get_start_time(), duration, tag);
+            .add_record(timer.get_start_time(), duration, &settings.label);
     }
 }
 
@@ -220,8 +220,6 @@ fn cmd_get_settings(state: State<AppState>) -> UiSettings {
     UiSettings {
         win_info,
         theme: settings.theme().to_string(),
-        tags: settings.tags().into(),
-        tag: settings.current_tag().to_string(),
         timers: settings.timer_list().into(),
     }
 }
@@ -229,8 +227,6 @@ fn cmd_get_settings(state: State<AppState>) -> UiSettings {
 #[tauri::command]
 fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
     let mut s = state.settings.lock().unwrap();
-    s.set_current_tag(&settings.tag);
-    *s.mut_tags() = settings.tags;
     s.set_theme(&settings.theme);
     *s.mut_timer_list() = settings.timers;
     s.set_window_info(&settings.win_info);
@@ -242,8 +238,6 @@ fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
 struct UiSettings {
     win_info: WindowInfo,
     theme: String,
-    tags: Vec<String>,
-    tag: String,
     timers: Vec<TimerSetting>,
     // play_audio: bool,
     // audio_file: String,

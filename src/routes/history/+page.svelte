@@ -10,7 +10,7 @@
   let selected_filter = $state("1 Day");
   let history: HistoryInfo[] = $state([]);
   let record: HistoryInfo | null = $state(null);
-  let tmp_record = $state({ duration: 0, tag: "" });
+  let tmp_record = $state({ duration: 0, label: "" });
   let showModal = $state(false);
 
   async function loadHistory(days: string) {
@@ -56,7 +56,7 @@
           <tr>
             <th>Start Time</th>
             <th>Duration</th>
-            <th>Tag</th>
+            <th>Label</th>
             <th></th>
           </tr>
         </thead>
@@ -65,7 +65,7 @@
             <tr>
               <th>{item.start_time}</th>
               <td class="font-mono">{item.duration}</td>
-              <td>{item.tag}</td>
+              <td>{item.label}</td>
               <td
                 ><label class="cursor-pointer"
                   ><input
@@ -73,7 +73,7 @@
                     onclick={() => {
                       record = item;
                       tmp_record.duration = item.duration_secs;
-                      tmp_record.tag = item.tag;
+                      tmp_record.label = item.label;
                       showModal = true;
                     }}
                   /><EditIcon class="h-4" />
@@ -90,12 +90,12 @@
 <Modal bind:showModal tittle="Modify a Record">
   <div class="py-4">
     {#if record !== null}
-      <p>{record.start_time} | {record.duration} | {record.tag}</p>
+      <p>{record.start_time} | {record.duration} | {record.label}</p>
       <div class="my-3 grid grid-cols-2 gap-4">
         <p>Duration in seconds:</p>
         <input type="number" class="input" bind:value={tmp_record.duration} />
-        <p>Tag:</p>
-        <input type="text" class="input" bind:value={tmp_record.tag} />
+        <p>Label:</p>
+        <input type="text" class="input" bind:value={tmp_record.label} />
       </div>
     {/if}
   </div>
@@ -116,11 +116,11 @@
       class="btn btn-soft btn-primary"
       onclick={async () => {
         showModal = false;
-        if (record && tmp_record.tag) {
+        if (record && tmp_record.label) {
           await cmdModifyRecord({
             key: record.key,
             duration: tmp_record.duration,
-            tag: tmp_record.tag
+            label: tmp_record.label
           });
           loadHistory(selected_filter);
         }

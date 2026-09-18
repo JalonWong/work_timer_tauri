@@ -38,6 +38,8 @@ def bump_version(mode: str) -> str:
     v_list = version.split(".")
     vi = int(v_list[index])
     v_list[index] = str(vi + 1)
+    for i in range(index + 1, 3):
+        v_list[i] = "0"
     return ".".join(v_list)
 
 

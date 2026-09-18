@@ -45,7 +45,7 @@
   }
 
   async function start(label: string) {
-    await cmdStartTimer({ label, tag: gUserState.tag });
+    await cmdStartTimer({ label });
     updateTimerStatus();
     update();
   }
@@ -70,14 +70,6 @@
     <span>Limit: {limitMins}m</span>
   </div>
 
-  <div class="flex justify-center">
-    <span class="label mr-1">Tag:</span>
-    <select bind:value={gUserState.tag} class="select">
-      {#each gUserState.tags as tag}
-        <option>{tag}</option>
-      {/each}
-    </select>
-  </div>
   <div class="m-3">
     <div class="flex justify-evenly gap-1">
       {#each gUserState.timers as timer}

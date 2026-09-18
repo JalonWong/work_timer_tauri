@@ -11,6 +11,17 @@
         "$rustc"
       ],
       "label": "dev"
+    },
+    {
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "check"
+      ],
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "label": "check"
     }
   ]
 }

@@ -3,18 +3,14 @@ import type { TimerSetting } from "./gen"
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 export async function stopTimer() {
-  await cmdStopTimer({ tag: gUserState.tag });
+  await cmdStopTimer();
 }
 
 export const gUserState: {
   theme: string;
-  tag: string;
-  tags: string[];
   timers: TimerSetting[];
 } = $state({
   theme: "",
-  tag: "",
-  tags: [],
   timers: [],
 });
 
@@ -69,22 +65,8 @@ export function moveTimer(index: number, up: boolean) {
   moveItemInPlace(gUserState.timers, index, up);
 }
 
-export function newTag() {
-  gUserState.tags.push("new")
-}
-
-export function deleteTag(index: number) {
-  gUserState.tags.splice(index, 1);
-}
-
-export function moveTag(index: number, up: boolean) {
-  moveItemInPlace(gUserState.tags, index, up);
-}
-
 export async function loadSettings() {
   let settings = await cmdGetSettings();
-  gUserState.tag = settings.tag;
-  gUserState.tags = settings.tags;
   gUserState.theme = settings.theme;
   applyTheme(settings.theme);
   gUserState.timers = settings.timers;
@@ -118,8 +100,6 @@ export async function saveSettings() {
         height: size.height,
       },
       theme: gUserState.theme,
-      tag: gUserState.tag,
-      tags: gUserState.tags,
       timers: gUserState.timers,
     }
   });

@@ -18,11 +18,11 @@ impl History {
         }
     }
 
-    pub fn add_record(&mut self, start_time: &SystemTime, duration: u64, tag: &str) {
+    pub fn add_record(&mut self, start_time: &SystemTime, duration: u64, label: &str) {
         let key = Self::to_key(start_time);
         let record = RecordTmp {
             d: duration,
-            t: tag.to_string(),
+            l: label.to_string(),
         };
         self.db
             .insert(key, toml::to_string(&record).unwrap().as_bytes())
@@ -57,14 +57,14 @@ impl History {
         self.db.flush().ok();
     }
 
-    pub fn modify_record(&mut self, key: u64, duration: u64, tag: &str) {
+    pub fn modify_record(&mut self, key: u64, duration: u64, label: &str) {
         self.db
             .fetch_and_update(key.to_be_bytes(), |value| {
                 if let Some(value) = value
                     && let Ok(mut record) =
                         toml::from_str::<RecordTmp>(std::str::from_utf8(value).unwrap())
                 {
-                    record.t = tag.to_string();
+                    record.l = label.to_string();
                     record.d = duration;
                     return Some(toml::to_string(&record).unwrap().into_bytes());
                 }
@@ -85,7 +85,7 @@ impl History {
                 .write_record(&[
                     dt.as_secs().to_string(),
                     record.duration.to_string(),
-                    record.tag,
+                    record.label,
                 ])
                 .unwrap();
         }
@@ -103,7 +103,7 @@ impl History {
                 key: start_time_u64,
                 start_time,
                 duration: t.d,
-                tag: t.t,
+                label: t.l,
             });
         }
         None
@@ -124,11 +124,11 @@ pub struct Record {
     pub key: u64,
     pub start_time: SystemTime,
     pub duration: u64,
-    pub tag: String,
+    pub label: String,
 }
 
 #[derive(Deserialize, Serialize)]
 struct RecordTmp {
     d: u64,
-    t: String,
+    l: String,
 }

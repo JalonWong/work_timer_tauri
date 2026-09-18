@@ -21,10 +21,7 @@ impl Settings {
         file_name.push("settings.toml");
 
         let info = Self::load_settings(&file_name);
-        let mut cache_info = Self::load_cache(&cache_name);
-        if !info.tags.contains(&cache_info.tag) {
-            cache_info.tag = info.tags.get(0).map_or("".to_string(), |v| v.clone());
-        }
+        let cache_info = Self::load_cache(&cache_name);
 
         Self {
             cache_name,
@@ -41,11 +38,6 @@ impl Settings {
             theme: "System".to_string(),
             audio_file: "assets/notify.wav".to_string(),
             play_audio: true,
-            tags: vec![
-                "Programming".to_string(),
-                "English".to_string(),
-                "Reading".to_string(),
-            ],
             timer_list: vec![
                 TimerSetting {
                     label: "\u{2615} Break".to_string(),
@@ -81,10 +73,7 @@ impl Settings {
     }
 
     fn load_cache(file_name: &Path) -> CacheInfo {
-        let mut info = CacheInfo {
-            window: None,
-            tag: "".to_string(),
-        };
+        let mut info = CacheInfo { window: None };
 
         if file_name.exists() {
             let toml_str = fs::read_to_string(file_name).unwrap();
@@ -109,14 +98,6 @@ impl Settings {
 
     pub fn set_window_info(&mut self, info: &WindowInfo) {
         self.cache_info.window = Some(info.clone());
-    }
-
-    pub fn tags(&self) -> &[String] {
-        self.info.tags.as_slice()
-    }
-
-    pub fn mut_tags(&mut self) -> &mut Vec<String> {
-        &mut self.info.tags
     }
 
     pub fn theme(&self) -> &str {
@@ -158,14 +139,6 @@ impl Settings {
     pub fn play_audio(&self) -> bool {
         self.info.play_audio
     }
-
-    pub fn set_current_tag(&mut self, v: &str) {
-        self.cache_info.tag = v.to_string();
-    }
-
-    pub fn current_tag(&self) -> &str {
-        &self.cache_info.tag
-    }
 }
 
 pub fn get_config_dir() -> PathBuf {
@@ -186,7 +159,6 @@ pub fn get_config_dir() -> PathBuf {
 #[derive(Deserialize, Serialize)]
 struct CacheInfo {
     window: Option<WindowInfo>,
-    tag: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Default)]
@@ -205,7 +177,6 @@ struct SettingInfo {
     theme: String,
     play_audio: bool,
     audio_file: String,
-    tags: Vec<String>,
     timer_list: Vec<TimerSetting>,
 }
 
