@@ -3,7 +3,7 @@ use sled::{Db, IVec};
 use std::{
     fs::File,
     io::Write,
-    path::PathBuf,
+    path::Path,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
@@ -12,9 +12,8 @@ pub struct History {
 }
 
 impl History {
-    pub fn new() -> Self {
-        let mut path = crate::settings::get_config_dir();
-        path.push("history_db");
+    pub fn new(data_dir: &Path) -> Self {
+        let path = data_dir.join("history_db");
         Self {
             db: sled::open(&path).unwrap(),
         }

@@ -1,7 +1,7 @@
 use chrono::Local;
 use serde::{Deserialize, Serialize};
-use std::{sync::Mutex, time::SystemTime};
-use tauri::State;
+use std::{fs, sync::Mutex, time::SystemTime};
+use tauri::{Manager, State};
 use tauri_plugin_window_state::StateFlags;
 
 mod history;
@@ -25,10 +25,6 @@ struct MainState {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let history = History::new();
-    let total_time = init_total_time(&history);
-    let settings = Settings::new();
-
     tauri::Builder::default()
         .plugin(
             tauri_plugin_window_state::Builder::new()
@@ -42,12 +38,6 @@ pub fn run() {
         )
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .manage(AppState {
-            settings: Mutex::new(settings),
-            history: Mutex::new(history),
-            count_timer: Mutex::new(Timer::new()),
-            state: Mutex::new(MainState { total_time }),
-        })
         .invoke_handler(tauri::generate_handler![
             cmd_start_timer,
             cmd_stop_timer,
@@ -60,6 +50,26 @@ pub fn run() {
             cmd_get_settings,
             cmd_save_settings,
         ])
+        .setup(|app| {
+            let mut data_dir = app.path().app_data_dir().unwrap();
+            #[cfg(debug_assertions)]
+            data_dir.push("debug");
+
+            if !data_dir.exists() {
+                fs::create_dir_all(&data_dir).unwrap();
+            }
+
+            let settings = Settings::new(&data_dir);
+            let history = History::new(&data_dir);
+            let total_time = init_total_time(&history);
+            app.manage(AppState {
+                settings: Mutex::new(settings),
+                history: Mutex::new(history),
+                count_timer: Mutex::new(Timer::new()),
+                state: Mutex::new(MainState { total_time }),
+            });
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

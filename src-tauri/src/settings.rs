@@ -10,16 +10,9 @@ pub struct Settings {
 }
 
 impl Settings {
-    pub fn new() -> Self {
-        let mut file_name = get_config_dir();
-
-        let mut cache_name = file_name.clone();
-        cache_name.push("cache.toml");
-
-        file_name.push("settings.toml");
-
+    pub fn new(config_dir: &Path) -> Self {
+        let file_name = config_dir.join("settings.toml");
         let info = Self::load_settings(&file_name);
-
         Self { file_name, info }
     }
 
@@ -27,7 +20,7 @@ impl Settings {
         let mut need_save = true;
 
         let mut info = SettingInfo {
-            theme: "System".to_string(),
+            theme: "".to_string(),
             audio_file: "assets/notify.wav".to_string(),
             play_audio: true,
             timer_list: vec![
@@ -103,19 +96,6 @@ impl Settings {
     pub fn play_audio(&self) -> bool {
         self.info.play_audio
     }
-}
-
-pub fn get_config_dir() -> PathBuf {
-    let mut path = dirs::config_dir().unwrap();
-    #[cfg(debug_assertions)]
-    path.push("work_timer_tauri_dbg");
-    #[cfg(not(debug_assertions))]
-    path.push("work_timer_tauri");
-
-    if !path.exists() {
-        fs::create_dir_all(&path).unwrap();
-    }
-    path
 }
 
 // ----------------------------------------------------------------------------
