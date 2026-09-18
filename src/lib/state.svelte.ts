@@ -61,6 +61,7 @@ export function newTimer() {
     count_up: false,
     play_a_sound: false,
     notification: false,
+    show_window: false,
   })
 }
 

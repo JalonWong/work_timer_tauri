@@ -42,7 +42,7 @@
               </label>
             </div>
 
-            <div class="flex flex-wrap gap-3">
+            <div class="flex gap-3">
               <label class="input text-base-content/60 input-primary">
                 Limit time:
                 <input type="number" class="grow text-base-content" bind:value={timer.limit_time} />
@@ -64,21 +64,32 @@
                 />
                 Count up
               </label>
-              <label class="label">
+            </div>
+            <div class="flex gap-3">
+              <span class="text-lg text-base-content">Timeout behavior:</span>
+              <label class="label text-base-content">
                 <input
                   type="checkbox"
                   class="checkbox checkbox-primary"
                   bind:checked={timer.play_a_sound}
                 />
-                Play sound on timeout
+                Play a sound
               </label>
-              <label class="label">
+              <label class="label text-base-content">
                 <input
                   type="checkbox"
                   class="checkbox checkbox-primary"
                   bind:checked={timer.notification}
                 />
-                Send notification on timeout
+                Send a notification
+              </label>
+              <label class="label text-base-content">
+                <input
+                  type="checkbox"
+                  class="checkbox checkbox-primary"
+                  bind:checked={timer.show_window}
+                />
+                Show window
               </label>
             </div>
           </fieldset>

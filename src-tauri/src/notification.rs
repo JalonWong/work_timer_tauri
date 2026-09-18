@@ -4,7 +4,7 @@ use std::{
     path::Path,
     thread,
 };
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 use tauri_plugin_notification::NotificationExt;
 
 pub fn play_a_sound(file_name: &Path) -> Result<()> {
@@ -21,11 +21,18 @@ pub fn play_a_sound(file_name: &Path) -> Result<()> {
     Ok(())
 }
 
-pub fn notify(app: AppHandle) {
+pub fn notify(app: &AppHandle) {
     let _ = app
         .notification()
         .builder()
         .title("Timer done")
         .auto_cancel()
         .show();
+}
+
+pub fn focus_on_window(app: &AppHandle) {
+    if let Some(win) = app.get_webview_window("main") {
+        let _ = win.unminimize();
+        let _ = win.set_focus();
+    }
 }

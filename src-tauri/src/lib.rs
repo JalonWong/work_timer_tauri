@@ -250,8 +250,6 @@ fn cmd_save_settings(settings: UiSettings, state: State<AppState>) {
 struct UiSettings {
     theme: String,
     timers: Vec<TimerSetting>,
-    // play_audio: bool,
-    // audio_file: String,
 }
 
 #[tauri::command]
@@ -259,18 +257,25 @@ fn cmd_timeout(app: AppHandle, state: State<AppState>) {
     let timer = state.count_timer.lock().unwrap();
     if let Some(s) = timer.get_setting() {
         if s.play_a_sound {
-            let sound_file = app
+            match app
                 .path()
                 .resolve("../static/sound.mp3", BaseDirectory::Resource)
-                .unwrap();
-
-            if let Err(e) = notification::play_a_sound(&sound_file) {
-                println!("cmd_play_a_sound: {e} {}", sound_file.display());
+            {
+                Ok(sound_file) => {
+                    if let Err(e) = notification::play_a_sound(&sound_file) {
+                        println!("cmd_play_a_sound: {e:?} {}", sound_file.display());
+                    }
+                }
+                Err(e) => println!("cmd_play_a_sound: {e:?}"),
             }
         }
 
         if s.notification {
-            notification::notify(app);
+            notification::notify(&app);
+        }
+
+        if s.show_window {
+            notification::focus_on_window(&app);
         }
     }
 }

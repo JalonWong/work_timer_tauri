@@ -22,22 +22,8 @@ impl Settings {
         let mut info = SettingInfo {
             theme: "".to_string(),
             timer_list: vec![
-                TimerSetting {
-                    label: "\u{2615} Break".to_string(),
-                    limit_time: 5,
-                    for_work: false,
-                    count_up: false,
-                    play_a_sound: true,
-                    notification: false,
-                },
-                TimerSetting {
-                    label: "\u{1F4BB} Work".to_string(),
-                    limit_time: 25,
-                    for_work: true,
-                    count_up: true,
-                    play_a_sound: true,
-                    notification: true,
-                },
+                TimerSetting::new("\u{2615} Break", false),
+                TimerSetting::new("\u{1F4BB} Work", true),
             ],
         };
 
@@ -95,17 +81,19 @@ pub struct TimerSetting {
     pub count_up: bool,
     pub play_a_sound: bool,
     pub notification: bool,
+    pub show_window: bool,
 }
 
-impl Default for TimerSetting {
-    fn default() -> Self {
+impl TimerSetting {
+    fn new(label: &str, notification: bool) -> Self {
         Self {
-            label: "new".to_string(),
+            label: label.to_string(),
             limit_time: 1,
             for_work: false,
             count_up: false,
             play_a_sound: false,
-            notification: false,
+            notification: notification,
+            show_window: false,
         }
     }
 }
