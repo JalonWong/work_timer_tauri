@@ -29,27 +29,27 @@
 </script>
 
 <main class="flex h-screen flex-col">
-  <Header text="History" />
-  <div class="mx-3 mb-3 flex grow flex-col">
-    <div class="flex">
-      <div class="mt-2 flex gap-3">
-        {#each filters as filter}
-          <label>
-            <input
-              type="radio"
-              class="radio radio-xs radio-primary"
-              name="filter"
-              value={filter}
-              onclick={() => loadHistory(filter)}
-              bind:group={selected_filter}
-            />
-            {filter}
-          </label>
-        {/each}
-      </div>
+  <Header text="History"
+    ><div class="mr-10 ml-6 flex grow gap-3">
+      {#each filters as filter}
+        <label>
+          <input
+            type="radio"
+            class="radio radio-xs radio-primary"
+            name="filter"
+            value={filter}
+            onclick={() => loadHistory(filter)}
+            bind:group={selected_filter}
+          />
+          {filter}
+        </label>
+      {/each}
+
       <div class="grow"></div>
-      <button class="btn">Export to CSV</button>
-    </div>
+      <button class="btn h-7">Export to CSV</button>
+    </div></Header
+  >
+  <div class="mx-3 mb-3 flex grow flex-col">
     <div class="table-pin-rows h-[calc(100vh-110px)] overflow-x-auto overflow-y-auto">
       <table class="table table-zebra">
         <thead>
@@ -91,11 +91,14 @@
   <div class="py-4">
     {#if record !== null}
       <p>{record.start_time} | {record.duration} | {record.label}</p>
-      <div class="my-3 grid grid-cols-2 gap-4">
-        <p>Duration in seconds:</p>
-        <input type="number" class="input" bind:value={tmp_record.duration} />
-        <p>Label:</p>
-        <input type="text" class="input" bind:value={tmp_record.label} />
+      <div class="my-3 grid grid-cols-3 gap-4">
+        <div class="flex flex-col justify-center"><span>Duration:</span></div>
+        <label class="input col-span-2 text-base-content/60">
+          <input type="number" class="grow text-base-content" bind:value={tmp_record.duration} />
+          seconds
+        </label>
+        <div class="flex flex-col justify-center"><span>Label:</span></div>
+        <input type="text" class="input col-span-2" bind:value={tmp_record.label} />
       </div>
     {/if}
   </div>
@@ -112,6 +115,7 @@
       }}>Delete</button
     >
     <div class="grow"></div>
+    <button class="btn btn-soft btn-primary" onclick={() => (showModal = false)}>Cancel</button>
     <button
       class="btn btn-soft btn-primary"
       onclick={async () => {
@@ -126,6 +130,5 @@
         }
       }}>OK</button
     >
-    <button class="btn btn-soft btn-primary" onclick={() => (showModal = false)}>Cancel</button>
   </div>
 </Modal>
