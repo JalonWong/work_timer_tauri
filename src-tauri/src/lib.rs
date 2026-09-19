@@ -146,11 +146,14 @@ fn cmd_get_timer_status(state: State<AppState>) -> TimerStatusRst {
 
 #[derive(Serialize, Deserialize)]
 pub struct HistoryInfo {
-    pub key: u64,
-    pub start_time: String,
-    pub duration: String,
-    pub duration_secs: u64,
-    pub label: String,
+    /// key
+    pub k: u64,
+    /// Start time
+    pub s: String,
+    /// Duration seconds
+    pub d: u64,
+    /// Label
+    pub l: String,
 }
 
 #[tauri::command]
@@ -169,21 +172,23 @@ fn cmd_get_history(
     records
         .iter()
         .map(|r| HistoryInfo {
-            key: r.key,
-            start_time: chrono::DateTime::<Local>::from(r.start_time)
+            k: r.key,
+            s: chrono::DateTime::<Local>::from(r.start_time)
                 .format("%Y-%m-%d %H:%M:%S")
                 .to_string(),
-            duration: crate::timer::secs_to_string(r.duration, ""),
-            duration_secs: r.duration,
-            label: r.label.clone(),
+            d: r.duration,
+            l: r.label.clone(),
         })
         .collect()
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChartData {
+    /// Date
     pub d: String,
+    /// Label
     pub l: String,
+    /// Duration seconds
     pub v: u64,
 }
 

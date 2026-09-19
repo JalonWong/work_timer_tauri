@@ -6,6 +6,7 @@
   import { cmdGetHistory, cmdDeleteRecord, cmdModifyRecord, cmdExportToCsv } from "$lib/gen";
   import EditIcon from "@iconify-svelte/mdi/edit";
   import Modal from "$lib/Modal.svelte";
+  import { secsToString } from "$lib/state.svelte";
 
   const filters = ["1 Day", "7 Days", "All"];
   let selected_filter = $state("1 Day");
@@ -69,26 +70,26 @@
       <table class="table table-zebra">
         <thead>
           <tr>
+            <th>Label</th>
             <th>Start Time</th>
             <th>Duration</th>
-            <th>Label</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {#each history as item, i}
             <tr>
-              <th>{item.start_time}</th>
-              <td class="font-mono">{item.duration}</td>
-              <td>{item.label}</td>
+              <td>{item.l}</td>
+              <th>{item.s}</th>
+              <td class="font-mono">{secsToString(item.d)}</td>
               <td
                 ><label class="cursor-pointer"
                   ><input
                     class="hidden"
                     onclick={() => {
                       record = item;
-                      tmp_record.duration = item.duration_secs;
-                      tmp_record.label = item.label;
+                      tmp_record.duration = item.d;
+                      tmp_record.label = item.l;
                       showModal = true;
                     }}
                   /><EditIcon class="h-4" />
@@ -105,7 +106,7 @@
 <Modal bind:showModal tittle="Modify a Record">
   <div class="py-4">
     {#if record !== null}
-      <p>{record.start_time} | {record.duration} | {record.label}</p>
+      <p>{record.l} | {record.s} | {secsToString(record.d)}</p>
       <div class="my-3 grid grid-cols-3 gap-4">
         <div class="flex flex-col justify-center"><span>Duration:</span></div>
         <label class="input col-span-2 text-base-content/60">
@@ -124,7 +125,7 @@
       onclick={async () => {
         showModal = false;
         if (record) {
-          await cmdDeleteRecord({ key: record.key });
+          await cmdDeleteRecord({ key: record.k });
           loadHistory(selected_filter);
         }
       }}>Delete</button
@@ -137,7 +138,7 @@
         showModal = false;
         if (record && tmp_record.label) {
           await cmdModifyRecord({
-            key: record.key,
+            key: record.k,
             duration: tmp_record.duration,
             label: tmp_record.label
           });
