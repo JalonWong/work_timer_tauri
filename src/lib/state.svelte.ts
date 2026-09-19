@@ -95,3 +95,20 @@ export async function onExit() {
   saveWindowState(StateFlags.ALL);
   saveSettings();
 }
+
+function two_digits(v: number): string {
+  return Math.trunc(v).toString().padStart(2, "0");
+}
+
+export function secsToString(secs: number): string {
+  let rst = "";
+  const minutes = secs / 60;
+  if (minutes >= 60) {
+    const hours = minutes / 60;
+    rst = two_digits(hours) + ":" + two_digits(minutes % 60);
+  } else {
+    rst = two_digits(minutes);
+  }
+  rst = rst + ":" + two_digits(secs % 60);
+  return rst;
+}

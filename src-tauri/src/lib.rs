@@ -1,6 +1,6 @@
 use chrono::Local;
 use serde::{Deserialize, Serialize};
-use std::{fs, sync::Mutex, time::SystemTime};
+use std::{collections::HashMap, fs, sync::Mutex, time::SystemTime};
 use tauri::{AppHandle, Manager, State, path::BaseDirectory};
 use tauri_plugin_window_state::StateFlags;
 
@@ -47,6 +47,7 @@ pub fn run() {
             cmd_get_timer_status,
             cmd_timeout,
             cmd_get_history,
+            cmd_get_history_for_chart,
             cmd_delete_record,
             cmd_modify_record,
             cmd_export_to_csv,
@@ -177,6 +178,70 @@ fn cmd_get_history(
             label: r.label.clone(),
         })
         .collect()
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ChartData {
+    pub d: String,
+    pub l: String,
+    pub v: u64,
+}
+
+#[tauri::command]
+fn cmd_get_history_for_chart(offset_days: Option<i64>, state: State<AppState>) -> Vec<ChartData> {
+    let start = match offset_days {
+        Some(days) => crate::get_time_from_offset_days(days),
+        None => SystemTime::UNIX_EPOCH,
+    };
+    let end = SystemTime::now();
+    let records = {
+        let history = state.history.lock().unwrap();
+        history.get_records(&start, &end, false)
+    };
+
+    let mut chart_info = vec![];
+    let mut last_date = "".to_string();
+    let mut data = HashMap::new();
+    for r in records {
+        let date = time_to_date_string(r.start_time);
+        if last_date != date {
+            if !data.is_empty() {
+                chart_info.append(
+                    &mut data
+                        .into_iter()
+                        .map(|(k, v)| ChartData {
+                            d: last_date.clone(),
+                            l: k,
+                            v: v,
+                        })
+                        .collect(),
+                );
+                data = HashMap::new();
+            }
+            last_date = date;
+        }
+
+        data.entry(r.label)
+            .and_modify(|dur| *dur += r.duration)
+            .or_insert(r.duration);
+    }
+    chart_info.append(
+        &mut data
+            .into_iter()
+            .map(|(k, v)| ChartData {
+                d: last_date.clone(),
+                l: k,
+                v: v,
+            })
+            .collect(),
+    );
+    chart_info
+}
+
+fn time_to_date_string(start_time: SystemTime) -> String {
+    use chrono::{DateTime, Local};
+    let local_time: DateTime<Local> = start_time.into();
+    local_time.date_naive().to_string()
 }
 
 #[tauri::command]

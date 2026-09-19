@@ -8,6 +8,7 @@
   import SettingsIcon from "@iconify-svelte/mdi/settings";
   import HistoryIcon from "@iconify-svelte/mdi/clipboard-text-history-outline";
   import TimerIcon from "@iconify-svelte/mdi/timer";
+  import ChartIcon from "@iconify-svelte/mdi/chart-bar-stacked";
 
   let { children } = $props();
   let showSidebar = $state(false);
@@ -53,6 +54,9 @@
     <ul class="menu min-h-full w-40 bg-base-200 p-4 text-base">
       <!-- Sidebar content here -->
       <li><a href="/" onclick={toggleSidebar}><HomeIcon class="h-5" />Home</a></li>
+      <li>
+        <a href="/chart" onclick={toggleSidebar}><ChartIcon class="h-5" />Chart</a>
+      </li>
       <li>
         <a href="/history" onclick={toggleSidebar}><HistoryIcon class="h-5" />History</a>
       </li>

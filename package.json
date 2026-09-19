@@ -16,11 +16,14 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@layerstack/utils": "^1.0.1",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "~2.7.3",
     "@tauri-apps/plugin-notification": "~2.4.0",
     "@tauri-apps/plugin-opener": "^2",
-    "@tauri-apps/plugin-window-state": "~2.4.1"
+    "@tauri-apps/plugin-window-state": "~2.4.1",
+    "layerchart": "^2.5.0",
+    "layerstack": "^1.0.0"
   },
   "devDependencies": {
     "@iconify-svelte/mdi": "^1.0.2",
