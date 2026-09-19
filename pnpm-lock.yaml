@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  layerchart: a8dbb442f6a5a2e419e8f5ea879d8f43f8df64b3c631ded1563ce5e067d36212
+  layerchart: c12cd0e60367ce6ff6b2931cd6a6ab4f3b4545cdd8486ca9528f6f92da0299e8
 
 importers:
 
@@ -31,7 +31,7 @@ importers:
         version: 2.4.1
       layerchart:
         specifier: ^2.5.0
-        version: 2.5.0(patch_hash=a8dbb442f6a5a2e419e8f5ea879d8f43f8df64b3c631ded1563ce5e067d36212)(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.57.0)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0)(typescript@6.0.3)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0)
+        version: 2.5.0(patch_hash=c12cd0e60367ce6ff6b2931cd6a6ab4f3b4545cdd8486ca9528f6f92da0299e8)(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.57.0)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0)(typescript@6.0.3)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0)
       layerstack:
         specifier: ^1.0.0
         version: 1.0.0
@@ -1618,7 +1618,7 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  layerchart@2.5.0(patch_hash=a8dbb442f6a5a2e419e8f5ea879d8f43f8df64b3c631ded1563ce5e067d36212)(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.57.0)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0)(typescript@6.0.3)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0):
+  layerchart@2.5.0(patch_hash=c12cd0e60367ce6ff6b2931cd6a6ab4f3b4545cdd8486ca9528f6f92da0299e8)(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.57.0)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0)(typescript@6.0.3)(vite@8.3.0(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.0):
     dependencies:
       '@dagrejs/dagre': 2.0.4
       '@layerstack/svelte-actions': 1.0.1-next.20

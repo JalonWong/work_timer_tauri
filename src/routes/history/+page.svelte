@@ -9,7 +9,7 @@
   import { secsToString } from "$lib/state.svelte";
 
   const filters = ["1 Day", "7 Days", "All"];
-  let selected_filter = $state("1 Day");
+  let selected_filter = $state("7 Days");
   let history: HistoryInfo[] = $state([]);
   let record: HistoryInfo | null = $state(null);
   let tmp_record = $state({ duration: 0, label: "" });
@@ -40,7 +40,7 @@
   }
 
   onMount(async () => {
-    loadHistory("1 Day");
+    loadHistory(selected_filter);
   });
 </script>
 

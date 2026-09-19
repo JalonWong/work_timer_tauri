@@ -1,13 +1,16 @@
 diff --git a/dist/components/charts/DefaultTooltip.svelte b/dist/components/charts/DefaultTooltip.svelte
-index 9df3172883dcbee3d238b9d93b13fec6cee65d38..89f7642c46ca2ba7caa6ed782d3c7600a964c3a0 100644
+index 9df3172883dcbee3d238b9d93b13fec6cee65d38..ae5fd325edf7a5d1a85b48fdd1fb703dd2e1bd37 100644
 --- a/dist/components/charts/DefaultTooltip.svelte
 +++ b/dist/components/charts/DefaultTooltip.svelte
-@@ -94,7 +94,7 @@
+@@ -94,7 +94,10 @@
      // Nothing names the sub-bands when the series are implicit — so the band's rows are the items
      // themselves, one per sub-band, labelled by the value that placed them there: `x1` / `y1`
      // within a band, or the band scale itself within a facet panel.
 -    if (d.length > 1 && context.series.isDefaultSeries) {
-+    if (d.length > 0 && context.series.isDefaultSeries) {
++    if (
++      (d.length > 1 || context.series.series.length > 1 || context.cGroups)
++      && context.series.isDefaultSeries
++    ) {
        const value = context.valueAxis === 'y' ? context.y : context.x;
        const subBand = context.facetBand
          ? context.valueAxis === 'y'
