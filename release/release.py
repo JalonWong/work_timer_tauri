@@ -27,7 +27,15 @@ if __name__ == "__main__":
         action="store_true",
         help="install PKGBUILD",
     )
+    parser.add_argument(
+        "--amd64",
+        action="store_true",
+    )
     opts = parser.parse_args()
+    macos_amd64 = False
+    if opts.amd64 and platform.system() == "Darwin":
+        macos_amd64 = True
+        run_cmd("rustup target add x86_64-apple-darwin")
 
     info = get_info()
 
@@ -35,10 +43,15 @@ if __name__ == "__main__":
     version = info["version"]
     print(f"{name}: {version}", flush=True)
 
+    additional_arg = ""
+    if macos_amd64:
+        additional_arg = " --target x86_64-apple-darwin"
+
     os.chdir("src-tauri")
-    run_cmd("cargo build --release")
+    run_cmd("cargo check --release" + additional_arg)
     os.chdir("..")
-    run_cmd("pnpm tauri build")
+    run_cmd("pnpm tauri build" + additional_arg)
+
     if "cachyos" in platform.release():
         cmd = "makepkg --force --dir=release"
         if opts.install:
@@ -51,17 +64,24 @@ if __name__ == "__main__":
         "release/",
     )
     copy_file(
-        f"{name}*{version}*.msi",
-        "src-tauri/target/release/bundle/msi/",
-        "release/",
-    )
-    copy_file(
-        f"{name}*{version}*.dmg",
-        "src-tauri/target/release/bundle/dmg/",
-        "release/",
-    )
-    copy_file(
         f"{name}*{version}*.rpm",
         "src-tauri/target/release/bundle/rpm/",
         "release/",
     )
+    copy_file(
+        f"{name}*{version}*.msi",
+        "src-tauri/target/release/bundle/msi/",
+        "release/",
+    )
+    if macos_amd64:
+        copy_file(
+            f"{name}*{version}*.dmg",
+            "src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/",
+            "release/",
+        )
+    else:
+        copy_file(
+            f"{name}*{version}*.dmg",
+            "src-tauri/target/release/bundle/dmg/",
+            "release/",
+        )
