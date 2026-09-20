@@ -36,7 +36,8 @@
       "../static/sound.mp3"
     ],
     "targets": [
-      "deb"
+      "deb",
+      "msi"
     ],
     "linux": {
       "deb": {
