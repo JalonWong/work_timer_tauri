@@ -1,5 +1,5 @@
 # Maintainer: Jalon Wong <jalonwong@gmail.com>
-pkgname=work_timer_tauri
+pkgname=Work-Timer
 pkgver=0.3.5
 pkgrel=1
 pkgdesc="A Work Timer Application"

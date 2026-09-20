@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "work_timer_tauri",
+  "productName": "Work-Timer",
   "version": "0.3.5",
   "identifier": "com.jalon.work-timer-tauri",
   "build": {
