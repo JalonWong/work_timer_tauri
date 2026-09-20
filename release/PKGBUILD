@@ -4,8 +4,8 @@ pkgver=0.3.5
 pkgrel=1
 pkgdesc="A Work Timer Application"
 arch=('x86_64')
-url="https://github.com/you/myapp"
-license=('MIT')
+url="https://github.com/JalonWong/work_timer_tauri"
+license=('Apache-2.0')
 
 package() {
   install -Dm644 "${startdir}/../src-tauri/icons/icon.svg" \
