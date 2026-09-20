@@ -14,7 +14,7 @@ package() {
   install -Dm644 "${startdir}/../src-tauri/target/release/_up_/static/sound.mp3" \
     "${pkgdir}/usr/lib/${pkgname}/_up_/static/sound.mp3"
 
-  install -Dm755 "${startdir}/../src-tauri/target/release/${pkgname}" \
+  install -Dm755 "${startdir}/../src-tauri/target/release/bundle/deb/${pkgname}_${pkgver}_amd64/data/usr/bin/${pkgname}" \
     "${pkgdir}/usr/bin/${pkgname}"
 
   install -Dm644 "${startdir}/../src-tauri/target/release/bundle/deb/${pkgname}_${pkgver}_amd64/data/usr/share/applications/${pkgname}.desktop" \

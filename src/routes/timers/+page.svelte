@@ -10,7 +10,7 @@
   onDestroy(() => saveSettings());
 </script>
 
-<main>
+<main class="flex h-screen flex-col">
   <Header text="Timers">
     <button class="btn ml-6 h-7" onclick={() => newTimer()}>
       <AddIcon class="h-5" />
