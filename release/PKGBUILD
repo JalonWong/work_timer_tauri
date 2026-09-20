@@ -1,6 +1,6 @@
 # Maintainer: Jalon Wong <jalonwong@gmail.com>
 pkgname=Work-Timer
-pkgver=0.4.0
+pkgver=0.4.1
 pkgrel=1
 pkgdesc="A Work Timer Application"
 arch=('x86_64')
