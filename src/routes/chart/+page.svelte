@@ -28,11 +28,11 @@
   });
 </script>
 
-<main class="flex h-screen flex-col">
+<main class="flex h-screen flex-col overflow-hidden">
   <Header text="Chart"
     ><div class="mr-10 ml-6 flex grow gap-3">
       {#each filters as filter}
-        <label>
+        <label class="whitespace-nowrap">
           <input
             type="radio"
             class="radio radio-xs radio-primary"
@@ -46,7 +46,7 @@
       {/each}
     </div></Header
   >
-  <div class="mx-4 flex grow flex-col justify-center">
+  <div class="mx-4 flex grow flex-col justify-center overflow-auto">
     <BarChart
       {data}
       x="d"

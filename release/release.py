@@ -20,6 +20,7 @@ if __name__ == "__main__":
     version = info["version"]
     print(f"{name}: {version}", flush=True)
 
+    run_cmd("pnpm install")
     run_cmd("pnpm tauri build")
     if platform.system() == "Linux":
         cmd = "makepkg --force --dir=release"

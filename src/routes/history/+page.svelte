@@ -44,11 +44,11 @@
   });
 </script>
 
-<main class="flex h-screen flex-col">
+<main class="flex h-screen flex-col overflow-hidden">
   <Header text="History"
     ><div class="mr-10 ml-6 flex grow gap-3">
       {#each filters as filter}
-        <label>
+        <label class="whitespace-nowrap">
           <input
             type="radio"
             class="radio radio-xs radio-primary"
@@ -66,7 +66,7 @@
     </div></Header
   >
   <div class="mx-3 mb-3 flex grow flex-col">
-    <div class="table-pin-rows h-[calc(100vh-110px)] overflow-x-auto overflow-y-auto">
+    <div class="table-pin-rows h-[calc(100vh-60px)] overflow-auto">
       <table class="table table-zebra">
         <thead>
           <tr>
