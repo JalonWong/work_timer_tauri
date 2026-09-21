@@ -37,7 +37,7 @@ impl Timer {
     pub fn stop(&mut self) -> Option<(u64, TimerSetting)> {
         self.status = Status::Stopped;
         if let Some(s) = self.setting.take()
-            && s.for_work
+            && s.save_history
         {
             return Some((self.count, s));
         }

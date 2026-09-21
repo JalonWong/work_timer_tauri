@@ -50,16 +50,12 @@
               <input type="number" class="grow text-base-content" bind:value={timer.limit_time} />
               minutes
             </label>
-            <label class="label text-base-content">
-              <input
-                type="checkbox"
-                class="checkbox checkbox-primary"
-                bind:checked={timer.for_work}
-              />
-              Work timer
-            </label>
             <div class="dropdown">
-              <div tabindex="0" role="button" class="btn m-1 btn-soft btn-primary">
+              <div
+                tabindex="0"
+                role="button"
+                class="btn m-1 btn-soft whitespace-nowrap btn-primary"
+              >
                 {#if timer.count_up}<UpIcon class="h-5" />Count up{:else}<DownIcon
                     class="h-5"
                   />Count down{/if}
@@ -90,6 +86,14 @@
                 </li>
               </ul>
             </div>
+            <label class="label text-base-content">
+              <input
+                type="checkbox"
+                class="checkbox checkbox-primary"
+                bind:checked={timer.save_history}
+              />
+              Save history
+            </label>
           </div>
           <div class="flex gap-3">
             <span class="text-lg text-base-content">Timeout:</span>

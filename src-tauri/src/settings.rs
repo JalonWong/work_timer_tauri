@@ -77,7 +77,7 @@ pub struct TimerSetting {
     pub label: String,
     /// in minutes
     pub limit_time: u64,
-    pub for_work: bool,
+    pub save_history: bool,
     pub count_up: bool,
     pub play_a_sound: bool,
     pub notification: bool,
@@ -85,11 +85,11 @@ pub struct TimerSetting {
 }
 
 impl TimerSetting {
-    fn new(label: &str, work: bool) -> Self {
+    fn new(label: &str, save_history: bool) -> Self {
         Self {
             label: label.to_string(),
             limit_time: 1,
-            for_work: work,
+            save_history,
             count_up: false,
             play_a_sound: false,
             notification: false,
