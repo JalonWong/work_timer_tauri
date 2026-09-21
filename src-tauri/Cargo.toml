@@ -3,7 +3,7 @@
   description = "A Work Timer Application"
   edition = "2024"
   name = "Work-Timer"
-  version = "1.0.0"
+  version = "1.0.1"
 
   # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
