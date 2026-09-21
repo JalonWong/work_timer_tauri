@@ -48,6 +48,7 @@ if __name__ == "__main__":
         additional_arg = " --target x86_64-apple-darwin"
 
     os.chdir("src-tauri")
+    run_cmd("cargo fetch")
     run_cmd("cargo check --release" + additional_arg)
     os.chdir("..")
     run_cmd("pnpm tauri build" + additional_arg)
