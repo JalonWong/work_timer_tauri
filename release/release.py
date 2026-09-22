@@ -1,6 +1,7 @@
 import argparse
 import os
 import platform
+import re
 import shutil
 from pathlib import Path
 
@@ -17,6 +18,18 @@ def copy_file(name: str, src_dir: str, dist_dir: str) -> None:
             os.remove(d)
         print(f"Copy: {s} -> {d}", flush=True)
         shutil.copy(s, d)
+
+
+def make_changelog() -> None:
+    if platform.system() != "Linux":
+        return
+
+    print("Make changelog", flush=True)
+    with open("CHANGELOG.md", "r") as f:
+        text = f.read()
+        m_list = list(re.finditer("# v.+", text))
+        with open("release/DIFF_CHANGELOG.md", "w") as f:
+            f.write(text[m_list[1].start() : m_list[2].start()])
 
 
 if __name__ == "__main__":
@@ -86,3 +99,5 @@ if __name__ == "__main__":
             "src-tauri/target/release/bundle/dmg/",
             "release/",
         )
+
+    make_changelog()

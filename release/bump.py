@@ -88,6 +88,7 @@ if __name__ == "__main__":
         "src-tauri/tauri.conf.json", r'"version": ".+"', f'"version": "{version}"'
     )
     replace_content("release/PKGBUILD", r"pkgver=.+", f"pkgver={version}")
+    replace_content("CHANGELOG.md", r"# vXXX", f"# vXXX\n\n# v{version}")
 
     os.chdir("src-tauri")
     run_cmd("cargo fetch")
