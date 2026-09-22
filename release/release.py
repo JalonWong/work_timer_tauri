@@ -27,9 +27,9 @@ def make_changelog() -> None:
     print("Make changelog", flush=True)
     with open("CHANGELOG.md", "r") as f:
         text = f.read()
-        m_list = list(re.finditer("# v.+", text))
+        m_list = list(re.finditer(r"# v.+\n", text))
         with open("release/DIFF_CHANGELOG.md", "w") as f:
-            f.write(text[m_list[1].start() : m_list[2].start()])
+            f.write(text[m_list[1].end() : m_list[2].start()])
 
 
 if __name__ == "__main__":
