@@ -2,6 +2,10 @@ import { cmdGetSettings, cmdSaveSettings, cmdStopTimer } from "./gen";
 import type { TimerSetting } from "./gen"
 import { saveWindowState, restoreStateCurrent, StateFlags } from '@tauri-apps/plugin-window-state';
 
+if (!import.meta.env.DEV) {
+  document.addEventListener('contextmenu', (e) => e.preventDefault(), { capture: true });
+}
+
 export async function stopTimer() {
   await cmdStopTimer();
 }
