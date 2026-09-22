@@ -79,16 +79,13 @@ pub fn run() {
 }
 
 #[tauri::command]
-fn cmd_start_timer(label: &str, state: State<AppState>) {
+fn cmd_start_timer(index: usize, state: State<AppState>) {
     let mut timer = state.count_timer.lock().unwrap();
     stop_and_save(&mut timer, &state);
 
     let settings = state.settings.lock().unwrap();
-    for t in settings.timer_list() {
-        if t.label == label {
-            timer.start(t);
-            break;
-        }
+    if let Some(t) = settings.timer_list().get(index) {
+        timer.start(t);
     }
 }
 

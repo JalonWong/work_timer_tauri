@@ -37,6 +37,16 @@
         {/each}
       </div>
     </fieldset>
+    <fieldset class="fieldset rounded-box border border-base-300 bg-base-200 p-4">
+      <legend class="fieldset-legend text-lg">Shortcuts</legend>
+      <ul class="list-outside list-disc pl-5 text-lg">
+        <li>
+          Use <b>1 ~ 9</b> to start a timer. Starting a new timer will automatically stop the current
+          one.
+        </li>
+        <li>Use <b>space</b> to stop the current timer.</li>
+      </ul>
+    </fieldset>
     <fieldset class="fieldset flex flex-col rounded-box border border-base-300 bg-base-200 p-4">
       <legend class="fieldset-legend text-lg">About</legend>
       <span class="text-lg">Version: v{version}</span>

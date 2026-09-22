@@ -51,8 +51,8 @@
     }
   }
 
-  async function start(label: string) {
-    await cmdStartTimer({ label });
+  async function start(index: number) {
+    await cmdStartTimer({ index });
     updateTimerStatus();
     update();
   }
@@ -62,7 +62,23 @@
     updateTimerStatus();
     update();
   }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === " ") {
+      event.preventDefault();
+      stop();
+    }
+
+    for (let i = 0; i < gUserState.timers.length; i++) {
+      if (i < 9 && event.key === (i + 1).toString()) {
+        event.preventDefault();
+        start(i);
+      }
+    }
+  }
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <main class="flex h-screen flex-col">
   <div class="flex grow flex-col items-center justify-center">
@@ -74,9 +90,9 @@
 
   <div class="m-3">
     <div class="flex justify-evenly gap-1">
-      {#each gUserState.timers as timer}
+      {#each gUserState.timers as timer, index}
         <button
-          onclick={() => (timerLabel === timer.label ? stop() : start(timer.label))}
+          onclick={() => (timerLabel === timer.label ? stop() : start(index))}
           class="btn flex-auto {timerLabel === timer.label ? '' : 'btn-soft'} btn-primary"
         >
           {timer.label}
