@@ -88,7 +88,7 @@ impl TimerSetting {
     fn new(label: &str, save_history: bool) -> Self {
         Self {
             label: label.to_string(),
-            limit_time: 1,
+            limit_time: 5,
             save_history,
             count_up: false,
             play_a_sound: false,

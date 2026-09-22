@@ -14,11 +14,12 @@
 
   async function update() {
     const { is_time_out, count_string } = await cmdGetTimerCount();
-    console.log("uu {} {}", is_time_out, count_string);
     gUserState.countString = count_string;
-    if (gUserState.isTimeout != is_time_out) {
+    if (gUserState.isTimeout !== is_time_out) {
       gUserState.isTimeout = is_time_out;
-      cmdTimeout();
+      if (is_time_out) {
+        cmdTimeout();
+      }
     }
   }
 

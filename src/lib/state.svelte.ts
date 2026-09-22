@@ -61,7 +61,7 @@ export function newTimer() {
   gUserState.timers.push({
     label: "new",
     limit_time: 5,
-    for_work: false,
+    save_history: false,
     count_up: false,
     play_a_sound: false,
     notification: false,
