@@ -12,7 +12,7 @@
   let selected_filter = $state("7 Days");
   let history: HistoryInfo[] = $state([]);
   let record: HistoryInfo | null = $state(null);
-  let tmp_record = $state({ duration: 0, label: "" });
+  let tmp_record = $state({ label: "", minutes: 0, seconds: 0 });
   let showModal = $state(false);
 
   async function loadHistory(days: string) {
@@ -88,7 +88,8 @@
                     class="hidden"
                     onclick={() => {
                       record = item;
-                      tmp_record.duration = item.d;
+                      tmp_record.minutes = Math.trunc(item.d / 60);
+                      tmp_record.seconds = item.d % 60;
                       tmp_record.label = item.l;
                       showModal = true;
                     }}
@@ -108,13 +109,26 @@
     {#if record !== null}
       <p>{record.l} | {record.s} | {secsToString(record.d)}</p>
       <div class="my-3 grid grid-cols-3 gap-4">
-        <div class="flex flex-col justify-center"><span>Duration:</span></div>
-        <label class="input col-span-2 text-base-content/60">
-          <input type="number" class="grow text-base-content" bind:value={tmp_record.duration} />
-          seconds
-        </label>
         <div class="flex flex-col justify-center"><span>Label:</span></div>
         <input type="text" class="input col-span-2" bind:value={tmp_record.label} />
+        <div class="flex flex-col justify-center"><span>Duration:</span></div>
+        <label class="input col-span-2 text-base-content/60">
+          <input
+            type="number"
+            min="0"
+            class="grow text-right text-base-content"
+            bind:value={tmp_record.minutes}
+          />
+          min
+          <input
+            type="number"
+            min="0"
+            max="59"
+            class="grow text-right text-base-content"
+            bind:value={tmp_record.seconds}
+          />
+          sec
+        </label>
       </div>
     {/if}
   </div>
@@ -139,7 +153,7 @@
         if (record && tmp_record.label) {
           await cmdModifyRecord({
             key: record.k,
-            duration: tmp_record.duration,
+            duration: tmp_record.minutes * 60 + tmp_record.seconds,
             label: tmp_record.label
           });
           loadHistory(selected_filter);
