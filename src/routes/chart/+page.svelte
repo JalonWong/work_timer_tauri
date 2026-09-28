@@ -46,7 +46,7 @@
       {/each}
     </div></Header
   >
-  <div class="mx-4 flex grow flex-col justify-center overflow-auto">
+  <div class="flex grow flex-col justify-center overflow-auto px-4">
     <BarChart
       {data}
       x="d"
