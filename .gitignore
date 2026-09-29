@@ -13,3 +13,4 @@ vite.config.ts.timestamp-*
 !packaging/*.desktop
 !release/PKGBUILD
 !release/*.py
+!release/*.xml

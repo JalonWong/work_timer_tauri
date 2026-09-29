@@ -1,5 +1,6 @@
 # Work Timer
-A work timer powered by Tauri + SvelteKit + TypeScript
+A work timer powered by Tauri + SvelteKit + TypeScript.
+It helps you manage work and rest. It alerts you when time is up and saves your work history when you stop.
 
 ## Features
 - The timer doesn't stop when the time exceeds the limit. Instead, it indicates with a color changing.
