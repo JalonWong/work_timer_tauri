@@ -9,7 +9,7 @@ license=('Apache-2.0')
 
 package() {
   install -Dm644 "${startdir}/../src-tauri/icons/icon.svg" \
-    "${pkgdir}/usr/share/pixmaps/${pkgname}.svg"
+    "${pkgdir}/usr/share/icons/hicolor/scalable/apps/${pkgname}.svg"
 
   install -Dm644 "${startdir}/../src-tauri/target/release/_up_/static/sound.mp3" \
     "${pkgdir}/usr/lib/${pkgname}/_up_/static/sound.mp3"
