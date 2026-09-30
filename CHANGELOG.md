@@ -1,5 +1,7 @@
 # vXXX
 
+# v1.0.4
+
 - Update tauri dependencies
 - Use wayland backend on Linux
 
