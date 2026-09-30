@@ -1,5 +1,8 @@
 # vXXX
 
+- Update tauri dependencies
+- Use wayland backend on Linux
+
 # v1.0.3
 
 - Fix chart padding issue
