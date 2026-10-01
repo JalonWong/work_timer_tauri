@@ -1,5 +1,7 @@
 # vXXX
 
+- Use offline icons
+
 # v1.0.4
 
 - Update tauri dependencies

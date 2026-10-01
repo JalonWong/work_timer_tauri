@@ -4,7 +4,7 @@
   import Header from "$lib/Header.svelte";
   import type { HistoryInfo } from "$lib/gen/types";
   import { cmdGetHistory, cmdDeleteRecord, cmdModifyRecord, cmdExportToCsv } from "$lib/gen";
-  import EditIcon from "@iconify-svelte/mdi/edit";
+  import EditIcon from "~icons/mdi/edit";
   import Modal from "$lib/Modal.svelte";
   import { secsToString } from "$lib/state.svelte";
 
@@ -93,7 +93,7 @@
                       tmp_record.label = item.l;
                       showModal = true;
                     }}
-                  /><EditIcon class="h-4" />
+                  /><EditIcon class="h-4 w-4" />
                 </label></td
               >
             </tr>

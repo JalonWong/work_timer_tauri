@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import BackIcon from "@iconify-svelte/mdi/chevron-left";
+  import BackIcon from "~icons/mdi/chevron-left";
 
   interface Props {
     text: string;
@@ -11,7 +11,7 @@
 
 <div class="sticky top-0 bg-base-100 px-2 pt-2">
   <div class="flex">
-    <a href="/" class="btn btn-square h-7 btn-ghost"><BackIcon class="h-8" /></a>
+    <a href="/" class="btn btn-square h-7 btn-ghost"><BackIcon class="h-8 w-8" /></a>
     <h1 class="text-xl">
       {text}
     </h1>

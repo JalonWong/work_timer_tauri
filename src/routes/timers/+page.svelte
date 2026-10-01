@@ -2,12 +2,12 @@
   import { onDestroy } from "svelte";
   import Header from "$lib/Header.svelte";
   import { gUserState, newTimer, moveTimer, deleteTimer, saveSettings } from "$lib/state.svelte";
-  import TrashIcon from "@iconify-svelte/mdi/trash-can";
-  import AddIcon from "@iconify-svelte/mdi/add";
-  import MoveUpIcon from "@iconify-svelte/mdi/chevron-up";
-  import MoveDownIcon from "@iconify-svelte/mdi/chevron-down";
-  import UpIcon from "@iconify-svelte/mdi/arrow-up";
-  import DownIcon from "@iconify-svelte/mdi/arrow-down";
+  import TrashIcon from "~icons/mdi/trash-can";
+  import AddIcon from "~icons/mdi/add";
+  import MoveUpIcon from "~icons/mdi/chevron-up";
+  import MoveDownIcon from "~icons/mdi/chevron-down";
+  import UpIcon from "~icons/mdi/arrow-up";
+  import DownIcon from "~icons/mdi/arrow-down";
 
   onDestroy(() => saveSettings());
 </script>
@@ -15,7 +15,7 @@
 <main class="flex h-screen flex-col overflow-hidden">
   <Header text="Timers">
     <button class="btn ml-6 h-7" onclick={() => newTimer()}>
-      <AddIcon class="h-5" />
+      <AddIcon class="h-5 w-5" />
       Add a Timer
     </button>
   </Header>
@@ -27,14 +27,14 @@
           <!-- <legend class="fieldset-legend">Timer</legend> -->
           <div class="flex gap-1">
             <button class="btn btn-square h-8" onclick={() => moveTimer(index, true)}>
-              <MoveUpIcon class="h-8" />
+              <MoveUpIcon class="h-8 w-8" />
             </button>
             <button class="btn btn-square h-8" onclick={() => moveTimer(index, false)}>
-              <MoveDownIcon class="h-8" />
+              <MoveDownIcon class="h-8 w-8" />
             </button>
             <div class="grow"></div>
             <button class="btn btn-square h-8" onclick={() => deleteTimer(index)}>
-              <TrashIcon class="h-5" />
+              <TrashIcon class="h-5 w-5" />
             </button>
           </div>
           <div class="flex">
@@ -56,7 +56,7 @@
                 role="button"
                 class="btn m-1 btn-soft whitespace-nowrap btn-primary"
               >
-                {#if timer.count_up}<UpIcon class="h-5" />Count up{:else}<DownIcon
+                {#if timer.count_up}<UpIcon class="h-5 w-5" />Count up{:else}<DownIcon
                     class="h-5"
                   />Count down{/if}
               </div>
@@ -71,7 +71,7 @@
                       if (document.activeElement instanceof HTMLElement) {
                         document.activeElement.blur();
                       }
-                    }}><UpIcon class="h-5" />Count up</button
+                    }}><UpIcon class="h-5 w-5" />Count up</button
                   >
                 </li>
                 <li>
@@ -81,7 +81,7 @@
                       if (document.activeElement instanceof HTMLElement) {
                         document.activeElement.blur();
                       }
-                    }}><DownIcon class="h-5" />Count down</button
+                    }}><DownIcon class="h-5 w-5" />Count down</button
                   >
                 </li>
               </ul>

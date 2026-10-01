@@ -4,10 +4,10 @@
   import { openUrl } from "@tauri-apps/plugin-opener";
   import Header from "$lib/Header.svelte";
   import { setTheme, getTheme } from "$lib/state.svelte";
-  import SunIcon from "@iconify-svelte/mdi/white-balance-sunny";
-  import NightIcon from "@iconify-svelte/mdi/weather-night";
-  import ComputerIcon from "@iconify-svelte/mdi/computer";
-  import GitHubIcon from "@iconify-svelte/mdi/github";
+  import SunIcon from "~icons/mdi/white-balance-sunny";
+  import NightIcon from "~icons/mdi/weather-night";
+  import ComputerIcon from "~icons/mdi/computer";
+  import GitHubIcon from "~icons/mdi/github";
 
   let themes = [
     { value: "", label: "System", icon: ComputerIcon },
@@ -21,9 +21,9 @@
   });
 </script>
 
-<main class="flex h-screen flex-col">
+<main class="flex h-screen flex-col overflow-hidden">
   <Header text="Settings" />
-  <div class="mx-4 flex grow flex-col">
+  <div class="mx-4 flex grow flex-col overflow-auto">
     <fieldset class="fieldset rounded-box border border-base-300 bg-base-200 p-4">
       <legend class="fieldset-legend text-lg">Theme</legend>
       <div class="flex gap-4">
@@ -32,7 +32,7 @@
             onclick={() => setTheme(theme.value)}
             class="btn {getTheme() === theme.value ? 'btn-primary' : ''}"
           >
-            <theme.icon class="h-5" />{theme.label}
+            <theme.icon />{theme.label}
           </button>
         {/each}
       </div>
@@ -52,7 +52,7 @@
       <span class="text-lg">Version: v{version}</span>
       <div class="flex">
         <label class="flex link gap-0.5 text-lg text-blue-500">
-          <div class="flex flex-col justify-center"><GitHubIcon class="h-6" /></div>
+          <div class="flex flex-col justify-center"><GitHubIcon /></div>
           GitHub
           <input
             type="button"

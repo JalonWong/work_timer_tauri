@@ -3,12 +3,12 @@
   import { onMount } from "svelte";
   import { onStart, onExit, stopTimer } from "$lib/state.svelte";
   import { getCurrentWindow } from "@tauri-apps/api/window";
-  import MenuIcon from "@iconify-svelte/mdi/menu";
-  import HomeIcon from "@iconify-svelte/mdi/home";
-  import SettingsIcon from "@iconify-svelte/mdi/settings";
-  import HistoryIcon from "@iconify-svelte/mdi/clipboard-text-history-outline";
-  import TimerIcon from "@iconify-svelte/mdi/timer";
-  import ChartIcon from "@iconify-svelte/mdi/chart-bar-stacked";
+  import MenuIcon from "~icons/mdi/menu";
+  import HomeIcon from "~icons/mdi/home";
+  import SettingsIcon from "~icons/mdi/settings";
+  import HistoryIcon from "~icons/mdi/clipboard-text-history-outline";
+  import TimerIcon from "~icons/mdi/timer";
+  import ChartIcon from "~icons/mdi/chart-bar-stacked";
 
   let { children } = $props();
   let showSidebar = $state(false);
@@ -43,7 +43,7 @@
         for="my-drawer-1"
         class="cursor-pointer p-1 text-base-content/40 hover:text-base-content xs:p-3"
       >
-        <MenuIcon class="h-5" />
+        <MenuIcon class="h-6 w-6" />
       </label>
     </div>
 
@@ -51,21 +51,23 @@
   </div>
   <div class="drawer-side">
     <label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay"></label>
-    <ul class="menu min-h-full w-40 bg-base-200 p-4 text-base">
+    <ul class="menu min-h-full w-40 bg-base-200 p-4 text-lg">
       <!-- Sidebar content here -->
-      <li><a href="/" onclick={toggleSidebar}><HomeIcon class="h-5" />Home</a></li>
       <li>
-        <a href="/chart" onclick={toggleSidebar}><ChartIcon class="h-5" />Chart</a>
+        <a href="/" onclick={toggleSidebar}><HomeIcon />Home</a>
       </li>
       <li>
-        <a href="/history" onclick={toggleSidebar}><HistoryIcon class="h-5" />History</a>
+        <a href="/chart" onclick={toggleSidebar}><ChartIcon />Chart</a>
       </li>
       <li>
-        <a href="/timers" onclick={toggleSidebar}><TimerIcon class="h-5" />Timers</a>
+        <a href="/history" onclick={toggleSidebar}><HistoryIcon />History</a>
+      </li>
+      <li>
+        <a href="/timers" onclick={toggleSidebar}><TimerIcon />Timers</a>
       </li>
       <div class="grow"></div>
       <li>
-        <a href="/settings" onclick={toggleSidebar}><SettingsIcon class="h-5" />Settings</a>
+        <a href="/settings" onclick={toggleSidebar}><SettingsIcon />Settings</a>
       </li>
     </ul>
   </div>
